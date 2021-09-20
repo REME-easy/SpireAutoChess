@@ -72,8 +72,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
                 AbstractMonster m = Monsters.get(i);
                 m.usePreBattleAction();
                 GenericHelper.addToBot(new RollMoveAction(m));
-                GenericHelper.MoveMonster(m, Settings.WIDTH * 0.15F + i * 250.0F * Settings.scale,
-                        AbstractDungeon.floorY);
+                GenericHelper.MoveMonster(m, i * 250.0F * Settings.scale, AbstractDungeon.floorY);
             }
         }
     }

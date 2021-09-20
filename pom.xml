@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>SpireAutoChess</name>
-    <description>REME`s mod!</description>
+    <description>Spire Auto Chess Mod</description>
 
     <properties>
         <project.build.sourceEncoding>
