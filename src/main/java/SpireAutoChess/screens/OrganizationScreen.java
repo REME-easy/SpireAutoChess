@@ -69,7 +69,7 @@ public class OrganizationScreen implements ScrollBarListener {
     public void open(AbstractTeamMonster... m) {
         this.addMonsters(m);
         for (AbstractMonster monster : m) {
-            monster.hideHealthBar();
+            monster.showHealthBar();
         }
         AbstractDungeon.screen = OrganizationScreenPatch.Enum.ORGANIZATION_SCREEN;
         AbstractDungeon.topPanel.unhoverHitboxes();

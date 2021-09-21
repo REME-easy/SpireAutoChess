@@ -8,6 +8,7 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.TipHelper;
+import com.megacrit.cardcrawl.ui.buttons.CancelButton;
 import com.megacrit.cardcrawl.ui.buttons.ConfirmButton;
 
 import SpireAutoChess.helper.CustomTipRenderer;
@@ -23,6 +24,7 @@ public class MonsterUpgradeScreen {
     private float arrowScale3;
     private float arrowTimer;
     public ConfirmButton confirmButton;
+    public CancelButton cancelButton;
 
     private AbstractTeamMonster monster;
     private AbstractTeamMonster upgradeMonster;
@@ -31,6 +33,7 @@ public class MonsterUpgradeScreen {
 
     public MonsterUpgradeScreen() {
         this.confirmButton = new ConfirmButton();
+        this.cancelButton = new CancelButton();
     }
 
     public void open(AbstractTeamMonster monster) {
@@ -58,6 +61,16 @@ public class MonsterUpgradeScreen {
             this.confirmButton.hb.clickStarted = false;
             this.confirmButton.isDisabled = true;
             this.confirmButton.hide();
+            this.cancelButton.hide();
+            this.close();
+        }
+
+        this.cancelButton.update();
+        if (this.cancelButton.hb.clicked) {
+            this.cancelButton.hb.clicked = false;
+            this.cancelButton.hb.clickStarted = false;
+            this.confirmButton.hide();
+            this.cancelButton.hide();
             this.close();
         }
     }
@@ -70,8 +83,8 @@ public class MonsterUpgradeScreen {
         CustomTipRenderer.renderGenericTip(Settings.WIDTH * 0.25F, Settings.HEIGHT * 0.6F, monster.name,
                 monster.getDescription());
         renderArrows(sb);
-        TipHelper.renderGenericTip(Settings.WIDTH * 0.6F, Settings.HEIGHT * 0.6F, monster.name,
-                monster.getDescription());
+        TipHelper.renderGenericTip(Settings.WIDTH * 0.6F, Settings.HEIGHT * 0.6F, upgradeMonster.name,
+                upgradeMonster.getDescription());
         this.confirmButton.render(sb);
         this.monster.render(sb);
     }

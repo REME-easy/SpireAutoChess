@@ -212,6 +212,15 @@ public class AbstractTeamMonster extends AbstractMonster {
         this.NextTurnAction = func;
     }
 
+    protected void setNextMove(byte move, Intent intent, Supplier<Boolean> func) {
+        setNextMove(move, intent, 0, func);
+    }
+
+    protected void setNextMove(byte move, Intent intent, int amount, int multiplier, Supplier<Boolean> func) {
+        this.setMove(move, intent, amount, multiplier, true);
+        this.NextTurnAction = func;
+    }
+
     public boolean takeTurnSimple(int index) {
         return this.NextTurnAction.get();
     }
