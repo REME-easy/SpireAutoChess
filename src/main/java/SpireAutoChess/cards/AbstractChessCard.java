@@ -2,7 +2,9 @@ package SpireAutoChess.cards;
 
 import static SpireAutoChess.character.ChessPlayer.Enums.CHESS_PLAYER_CARD;
 
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.localization.CardStrings;
+import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
 import basemod.abstracts.CustomCard;
 
@@ -98,12 +100,12 @@ public abstract class AbstractChessCard extends CustomCard {
     }
 
     @Override
-    public void applyPowers() {
-        super.applyPowers();
+    public void use(AbstractPlayer arg0, AbstractMonster arg1) {
     }
 
-    public void receiveBattleStart() {
-
+    @Override
+    public void applyPowers() {
+        super.applyPowers();
     }
 
     public void limitedUpgrade() {

@@ -20,7 +20,6 @@ public class BlackKey extends AbstractChessCard {
     public BlackKey() {
         super(ID, cardStrings, 0, ATTACK, CardRarity.UNCOMMON, CardTarget.ENEMY);
         this.setupDamage(11);
-        receiveBattleStart();
         this.exhaust = true;
     }
 
