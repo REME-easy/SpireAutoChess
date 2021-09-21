@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -24,7 +25,6 @@ import com.megacrit.cardcrawl.localization.CharacterStrings;
 import com.megacrit.cardcrawl.relics.BustedCrown;
 import com.megacrit.cardcrawl.screens.CharSelectInfo;
 
-import SpireAutoChess.helper.GenericHelper;
 import basemod.abstracts.CustomPlayer;
 
 public class ChessPlayer extends CustomPlayer {
@@ -51,14 +51,14 @@ public class ChessPlayer extends CustomPlayer {
     @Override
     public void applyStartOfCombatLogic() {
         super.applyStartOfCombatLogic();
-        GenericHelper.addToBot(new AbstractGameAction() {
-            @Override
-            public void update() {
-                // AbstractDungeon.overlayMenu.hideCombatPanels();
-                hideHealthBar();
-                isDone = true;
-            }
-        });
+        // GenericHelper.addToBot(new AbstractGameAction() {
+        // @Override
+        // public void update() {
+        // // AbstractDungeon.overlayMenu.hideCombatPanels();
+        // hideHealthBar();
+        // isDone = true;
+        // }
+        // });
     }
 
     @Override
@@ -161,6 +161,10 @@ public class ChessPlayer extends CustomPlayer {
     @Override
     public Color getCardRenderColor() {
         return GetCharColor();
+    }
+
+    @Override
+    public void renderHealth(SpriteBatch sb) {
     }
 
     @Override

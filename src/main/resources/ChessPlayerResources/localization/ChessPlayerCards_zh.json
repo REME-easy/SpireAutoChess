@@ -1,0 +1,10 @@
+{
+  "ChessPlayer_HealthUpOne": {
+    "NAME": "生命强化Ⅰ",
+    "DESCRIPTION": " chessplayer:强化 。 NL 战斗开始时， !CPM! 号位置的怪物获得 !M! 点生命上限。"
+  },
+  "ChessPlayer_AttackUpOne": {
+    "NAME": "攻击强化Ⅰ",
+    "DESCRIPTION": " chessplayer:强化 。 NL 战斗开始时， !CPM! 号位置的怪物获得 !M! 点 力量 。"
+  }
+}

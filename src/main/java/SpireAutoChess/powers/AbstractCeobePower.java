@@ -1,14 +1,15 @@
 package SpireAutoChess.powers;
 
+import static com.megacrit.cardcrawl.powers.AbstractPower.PowerType.BUFF;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.powers.AbstractPower;
-
-import java.util.ArrayList;
-
-import static com.megacrit.cardcrawl.powers.AbstractPower.PowerType.BUFF;
 
 public abstract class AbstractCeobePower extends AbstractPower {
     public ArrayList<Integer> counters = new ArrayList<>();
@@ -43,8 +44,9 @@ public abstract class AbstractCeobePower extends AbstractPower {
 
     public AbstractCeobePower makeCopy() {
         try {
-            return this.getClass().newInstance();
-        } catch (IllegalAccessException | InstantiationException var2) {
+            return this.getClass().getConstructor().newInstance();
+        } catch (IllegalAccessException | InstantiationException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException var2) {
             throw new RuntimeException("cannot create instance of: " + this.ID);
         }
     }

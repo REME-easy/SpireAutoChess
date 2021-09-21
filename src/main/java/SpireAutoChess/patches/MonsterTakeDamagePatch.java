@@ -8,13 +8,13 @@ import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.powers.AbstractPower;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import SpireAutoChess.character.TeamMonsterGroup;
+import SpireAutoChess.monsters.AbstractTeamMonster;
 
 public class MonsterTakeDamagePatch {
     private static final Logger logger = LogManager.getLogger(MonsterTakeDamagePatch.class.getName());
@@ -24,9 +24,9 @@ public class MonsterTakeDamagePatch {
     }
 
     public static boolean getTarget() {
-        ArrayList<AbstractMonster> tmp2 = TeamMonsterGroup.GetMonsters();
-        ArrayList<AbstractMonster> tmp = new ArrayList<>();
-        for (AbstractMonster o1 : tmp2) {
+        ArrayList<AbstractTeamMonster> tmp2 = TeamMonsterGroup.GetMonsters();
+        ArrayList<AbstractTeamMonster> tmp = new ArrayList<>();
+        for (AbstractTeamMonster o1 : tmp2) {
             if (!o1.isDeadOrEscaped())
                 tmp.add(o1);
         }

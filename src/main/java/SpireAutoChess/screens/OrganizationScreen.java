@@ -7,21 +7,24 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.megacrit.cardcrawl.core.Settings;
-import com.megacrit.cardcrawl.helpers.Hitbox;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.MathHelper;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
-import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.screens.mainMenu.HorizontalScrollBar;
 import com.megacrit.cardcrawl.screens.mainMenu.ScrollBarListener;
 import com.megacrit.cardcrawl.ui.buttons.ConfirmButton;
 
+import SpireAutoChess.character.TeamMonsterGroup;
 import SpireAutoChess.helper.CustomTipRenderer;
+import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.helper.MonsterManager;
+import SpireAutoChess.monsters.AbstractTeamMonster;
+import SpireAutoChess.patches.OrganizationScreenPatch;
 
 public class OrganizationScreen implements ScrollBarListener {
-    public static OrganizationScreen _inst;
+    private static OrganizationScreen _inst;
 
     public static OrganizationScreen Inst() {
         if (_inst == null)
@@ -29,8 +32,9 @@ public class OrganizationScreen implements ScrollBarListener {
         return _inst;
     }
 
-    public ArrayList<AbstractMonster> teamMonsters;
-    public ArrayList<Hitbox> monstersHitboxes;
+    public ArrayList<AbstractTeamMonster> teamMonsters;
+    public ArrayList<UpgradeButton> upgradeButtons;
+    public ArrayList<SellButton> sellButtons;
 
     private boolean grabbedScreen = false;
     private float grabStartX = 0.0F;
@@ -42,27 +46,52 @@ public class OrganizationScreen implements ScrollBarListener {
     private boolean shouldShowScrollBar;
     private HorizontalScrollBar scrollBar;
     public ConfirmButton confirmButton;
-    public MonsterInfoScreen infoScreen;
+    public MonsterUpgradeScreen upgradeScreen;
 
     public OrganizationScreen() {
         this.scrollX = Settings.WIDTH - 300.0F * Settings.xScale;
         this.targetX = this.scrollX;
-        this.scrollLowerBound = (float) Settings.WIDTH - 300.0F * Settings.xScale;
+        this.scrollLowerBound = 0.0F;
         this.scrollUpperBound = 2400.0F * Settings.scale;
         this.shouldShowScrollBar = false;
         this.confirmButton = new ConfirmButton();
         this.targetX = 0.0F;
         this.currentWidth = 0.0F;
         this.teamMonsters = new ArrayList<>();
-        this.monstersHitboxes = new ArrayList<>();
+        this.upgradeButtons = new ArrayList<>();
+        this.sellButtons = new ArrayList<>();
         this.scrollBar = new HorizontalScrollBar(this, (float) Settings.WIDTH / 2.0F,
                 50.0F * Settings.scale + HorizontalScrollBar.TRACK_H / 2.0F,
                 (float) Settings.WIDTH - 256.0F * Settings.scale);
-        this.infoScreen = new MonsterInfoScreen();
+        this.upgradeScreen = new MonsterUpgradeScreen();
     }
 
-    public void open(AbstractMonster... m) {
+    public void open(AbstractTeamMonster... m) {
         this.addMonsters(m);
+        for (AbstractMonster monster : m) {
+            monster.hideHealthBar();
+        }
+        AbstractDungeon.screen = OrganizationScreenPatch.Enum.ORGANIZATION_SCREEN;
+        AbstractDungeon.topPanel.unhoverHitboxes();
+        AbstractDungeon.isScreenUp = true;
+        confirmButton.isDisabled = false;
+        overlayMenu.proceedButton.hide();
+        overlayMenu.cancelButton.hide();
+        overlayMenu.hideCombatPanels();
+        confirmButton.hideInstantly();
+        confirmButton.show();
+    }
+
+    public void open(TeamMonsterGroup group) {
+        currentWidth = 0.0F;
+        for (AbstractTeamMonster m : group.Monsters) {
+            AbstractTeamMonster inst = MonsterManager.GetMonsterInstance(m.id);
+            this.addMonsters(inst);
+            inst.showHealthBar();
+        }
+        AbstractDungeon.screen = OrganizationScreenPatch.Enum.ORGANIZATION_SCREEN;
+        AbstractDungeon.topPanel.unhoverHitboxes();
+        AbstractDungeon.isScreenUp = true;
         confirmButton.isDisabled = false;
         overlayMenu.proceedButton.hide();
         overlayMenu.cancelButton.hide();
@@ -72,43 +101,60 @@ public class OrganizationScreen implements ScrollBarListener {
     }
 
     public void reopen() {
+        AbstractDungeon.screen = OrganizationScreenPatch.Enum.ORGANIZATION_SCREEN;
+        AbstractDungeon.topPanel.unhoverHitboxes();
+        AbstractDungeon.isScreenUp = true;
+        AbstractDungeon.overlayMenu.proceedButton.hide();
+        AbstractDungeon.overlayMenu.endTurnButton.disable();
+        GenericHelper.info("screen reopen");
     }
 
-    public void end() {
+    public void close() {
         this.teamMonsters.clear();
-        this.monstersHitboxes.clear();
+        this.upgradeButtons.clear();
+        this.sellButtons.clear();
+        confirmButton.hide();
+        AbstractDungeon.isScreenUp = false;
+        AbstractDungeon.closeCurrentScreen();
+        overlayMenu.showCombatPanels();
     }
 
-    public void addMonsters(AbstractMonster... m) {
-        for (AbstractMonster monster : m) {
+    public void addMonsters(AbstractTeamMonster... m) {
+        for (AbstractTeamMonster monster : m) {
             this.teamMonsters.add(monster);
-            currentWidth += monster.hb_w;
+            this.upgradeButtons.add(new UpgradeButton(this, this.teamMonsters.size() - 1));
+            this.sellButtons.add(new SellButton(this, this.teamMonsters.size() - 1));
+            currentWidth += monster.hb_w * 2.0F;
         }
         this.checkIfShowScrollBar();
     }
 
-    public void selectMonster(int index) {
+    public void selectToUpgrade(int index) {
+        upgradeScreen.open(teamMonsters.get(index));
+    }
 
+    public void selectToSell(int index) {
     }
 
     public void update() {
-        if (!this.infoScreen.isOpen) {
+        if (!this.upgradeScreen.isOpen) {
             this.confirmButton.update();
             if (this.confirmButton.hb.clicked) {
                 this.confirmButton.hb.clicked = false;
                 this.confirmButton.hb.clickStarted = false;
                 this.confirmButton.isDisabled = true;
                 this.confirmButton.hide();
+                this.close();
             }
 
             // this.updateControllerInput();
             if (!this.scrollBar.update()) {
                 this.updateScrolling();
             }
+            updateMonsters();
         } else {
-            this.infoScreen.update();
+            this.upgradeScreen.update();
         }
-
     }
 
     private void updateScrolling() {
@@ -140,20 +186,26 @@ public class OrganizationScreen implements ScrollBarListener {
         float preWidth = 0;
 
         for (int i = 0; i < teamSize; i++) {
-            AbstractMonster m = this.teamMonsters.get(i);
-            m.drawX = targetX + Settings.WIDTH / 2.0F + (i - (float) (teamSize - 1) / 2.0F) * preWidth * 1.2F;
-            preWidth = m.hb_w;
+            AbstractTeamMonster m = this.teamMonsters.get(i);
+            GenericHelper.MoveMonster(m, preWidth - scrollX, m.drawY);
+            preWidth += m.hb_w * 2.0F;
 
             m.update();
             m.hb.update();
             if (m.hb.hovered) {
-                StringBuilder builder = new StringBuilder();
-                MonsterStrings txt = MonsterManager.GetLocale(m.id);
-                for (String s : txt.MOVES) {
-                    builder.append(s + " NL ");
-                }
-                CustomTipRenderer.renderGenericTip(m.drawX + m.hb_w, m.drawY, m.name, builder.toString());
+                CustomTipRenderer.renderGenericTip(m.drawX + m.hb_w, m.drawY + m.hb_h / 2.0F, m.name,
+                        m.getDescription());
             }
+
+            UpgradeButton btn = this.upgradeButtons.get(i);
+            btn.update();
+            btn.current_x = m.drawX - 107.0F * Settings.scale;
+            btn.current_y = m.drawY - 64.0F * Settings.scale;
+
+            SellButton sell = this.sellButtons.get(i);
+            sell.update();
+            sell.current_x = m.drawX + 43.0F * Settings.scale;
+            sell.current_y = m.drawY - 64.0F * Settings.scale;
         }
     }
 
@@ -167,16 +219,19 @@ public class OrganizationScreen implements ScrollBarListener {
     }
 
     public void render(SpriteBatch sb) {
+        sb.setColor(new Color(0.0F, 0.0F, 0.0F, 0.95F));
+        sb.draw(ImageMaster.WHITE_SQUARE_IMG, 0.0F, 0.0F, Settings.WIDTH, Settings.HEIGHT - 64.0F * Settings.scale);
+        sb.setColor(Color.WHITE);
         this.confirmButton.render(sb);
         this.renderMonsters(sb);
         if (this.shouldShowScrollBar) {
             this.scrollBar.render(sb);
         }
 
-        if (this.infoScreen.isOpen) {
-            sb.setColor(Color.BLACK);
+        if (this.upgradeScreen.isOpen) {
+            sb.setColor(new Color(0.0F, 0.0F, 0.0F, 0.9F));
             sb.draw(ImageMaster.WHITE_SQUARE_IMG, 0.0F, 0.0F, (float) Settings.WIDTH, (float) Settings.HEIGHT);
-            this.infoScreen.render(sb);
+            this.upgradeScreen.render(sb);
             sb.setColor(Color.WHITE);
         }
     }
@@ -184,15 +239,24 @@ public class OrganizationScreen implements ScrollBarListener {
     private void renderMonsters(SpriteBatch sb) {
         int teamSize = this.teamMonsters.size();
         for (int i = 0; i < teamSize; i++) {
-            AbstractMonster m = this.teamMonsters.get(i);
+            if (!this.upgradeScreen.isOpen) {
+                this.upgradeButtons.get(i).render(sb);
+                this.sellButtons.get(i).render(sb);
+            }
+            AbstractTeamMonster m = this.teamMonsters.get(i);
             m.render(sb);
+            m.renderHealth(sb);
         }
-
     }
 
     private void checkIfShowScrollBar() {
-        if (!(this.shouldShowScrollBar = this.currentWidth > Settings.WIDTH))
-            this.resetScrolling();
+        // if (!(this.shouldShowScrollBar = this.currentWidth > Settings.WIDTH * 1.5F))
+        // {
+        this.scrollLowerBound = -500.0F;
+        this.scrollUpperBound = Settings.WIDTH - this.currentWidth + 300.0F;
+        this.shouldShowScrollBar = true;
+        this.resetScrolling();
+        // }
     }
 
     @Override

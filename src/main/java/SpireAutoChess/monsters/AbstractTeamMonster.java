@@ -1,5 +1,6 @@
 package SpireAutoChess.monsters;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,6 +22,7 @@ import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.EnemyMoveInfo;
 import com.megacrit.cardcrawl.powers.AbstractPower;
@@ -37,10 +39,29 @@ import basemod.ReflectionHacks;
 public class AbstractTeamMonster extends AbstractMonster {
     protected Supplier<Boolean> NextTurnAction;
 
+    public final String[] moves;
+    public final String[] dialog;
+
+    public final ArrayList<MoveInfo> moveInfos = new ArrayList<>();
+    public final ArrayList<String> rawDescriptions = new ArrayList<>();
+    public String description;
+    public boolean isDirty = false;
+
+    public MonsterRarity rarity = MonsterRarity.COMMON;
+    public int upgradedTimes = 0;
+    public int maxUpgradeTimes = 1;
+
+    private static final int COMMON_PRICE = 50;
+    private static final int UNCOMMON_PRICE = 125;
+    private static final int RARE_PRICE = 250;
+
     public AbstractTeamMonster(String name, String id, int maxHealth, float hb_x, float hb_y, float hb_w, float hb_h,
             String imgUrl, float offsetX, float offsetY) {
         super(name, id, maxHealth, hb_x, hb_y, hb_w, hb_h, imgUrl, offsetX, offsetY);
         this.isPlayer = true;
+        MonsterStrings strings = CardCrawlGame.languagePack.getMonsterStrings(id);
+        moves = strings.MOVES;
+        dialog = strings.DIALOG;
     }
 
     protected void DamageFront(DamageInfo info, DamageType type, AttackEffect effect) {
@@ -68,17 +89,122 @@ public class AbstractTeamMonster extends AbstractMonster {
         }
     }
 
+    public int getPurchasePrice() {
+        return this.rarity.price;
+    }
+
+    public int getUpgradePrice(int level) {
+        return level * 50;
+    }
+
+    public int getSellPrice() {
+        return (getPurchasePrice() + getUpgradePrice(this.upgradedTimes)) / 2;
+    }
+
+    public boolean canUpgrade() {
+        return this.upgradedTimes < this.maxUpgradeTimes;
+    }
+
+    public void upgrade(int level) {
+        this.upgradedTimes++;
+    }
+
+    public void setDescriptionRange(int min, int max) {
+        this.rawDescriptions.clear();
+        for (int i = min; i <= max; i++) {
+            this.rawDescriptions.add(this.moves[i]);
+        }
+        this.isDirty = true;
+    }
+
+    public void setDescriptionRange(int max) {
+        setDescriptionRange(0, max);
+    }
+
+    public void setDescriptionRange() {
+        setDescriptionRange(0, this.moves.length - 1);
+    }
+
+    public void addDescription(int index, int position) {
+        this.rawDescriptions.add(position, this.moves[index]);
+        this.isDirty = true;
+    }
+
+    public void addNextDescription(int position) {
+        if (position < 0)
+            position = this.rawDescriptions.size() + position;
+        addDescription(this.rawDescriptions.size(), position);
+    }
+
+    public void addNextDescription() {
+        addNextDescription(0);
+    }
+
+    public String getDescription() {
+        if (isDirty) {
+            StringBuilder builder = new StringBuilder();
+            int index = 0;
+            for (String str : this.rawDescriptions) {
+                str = str.replace("D", String.valueOf(this.moveInfos.get(index).info.base))
+                        .replace("B", String.valueOf(getBlock(index)))
+                        .replace("M", String.valueOf(getMagicNumber(index)));
+                index++;
+                builder.append(str + " NL ");
+            }
+            this.description = builder.toString();
+            this.isDirty = false;
+        }
+        return this.description;
+    }
+
     @Override
     protected void getMove(int rnd) {
 
     }
 
+    public void addMoveInfo(DamageInfo info, int block, int magic) {
+        // this.damage.add(info);
+        this.moveInfos.add(new MoveInfo(info, block, magic));
+    }
+
+    public void addMoveInfo(DamageInfo info) {
+        addMoveInfo(info, 0, 0);
+    }
+
+    public void addMoveInfo(int block, int magic) {
+        addMoveInfo(new DamageInfo(this, 0), block, magic);
+        this.isDirty = true;
+    }
+
     protected int getDamage(int index) {
-        return this.damage.get(index).base;
+        return this.moveInfos.get(index).info.base;
+    }
+
+    protected void changeDamage(int index, int delta) {
+        this.moveInfos.get(index).info.base += delta;
+        this.isDirty = true;
+    }
+
+    protected int getBlock(int index) {
+        return this.moveInfos.get(index).block;
+    }
+
+    protected void changeBlock(int index, int delta) {
+        this.moveInfos.get(index).block += delta;
+        this.isDirty = true;
+    }
+
+    protected int getMagicNumber(int index) {
+        return this.moveInfos.get(index).magic;
+    }
+
+    protected void changeMagicNumber(int index, int delta) {
+        this.moveInfos.get(index).magic += delta;
+        this.isDirty = true;
     }
 
     protected DamageInfo getDamageInfo(int index) {
-        return this.damage.get(index);
+        return this.moveInfos.get(index).info;
     }
 
     protected void setNextMove(byte move, Intent intent, int amount, Supplier<Boolean> func) {
@@ -259,10 +385,15 @@ public class AbstractTeamMonster extends AbstractMonster {
 
     @Override
     public void applyPowers() {
-        for (DamageInfo info : this.damage) {
-            GenericHelper.info("before calculate:" + info.base + ",output:" + info.output);
-            info.applyPowers(this, GenericHelper.getFrontMonster());
-            GenericHelper.info("after calculate:" + info.base + ",output:" + info.output);
+        // for (DamageInfo info : this.damage) {
+        // GenericHelper.info("before calculate:" + info.base + ",output:" +
+        // info.output);
+        // info.applyPowers(this, GenericHelper.getFrontMonster());
+        // GenericHelper.info("after calculate:" + info.base + ",output:" +
+        // info.output);
+        // }
+        for (MoveInfo move : this.moveInfos) {
+            move.info.applyPowers(this, GenericHelper.getFrontMonster());
         }
         EnemyMoveInfo move = ReflectionHacks.getPrivateInherited(this, AbstractTeamMonster.class, "move");
         if (move.baseDamage > -1) {
@@ -364,5 +495,27 @@ public class AbstractTeamMonster extends AbstractMonster {
     @SpireOverride
     protected Texture getIntentImg() {
         return SpireSuper.call(new Object[] {});
+    }
+
+    public enum MonsterRarity {
+        COMMON(COMMON_PRICE), UNCOMMON(UNCOMMON_PRICE), RARE(RARE_PRICE);
+
+        public int price;
+
+        MonsterRarity(int price) {
+            this.price = price;
+        }
+    }
+
+    public class MoveInfo {
+        private DamageInfo info;
+        private int block;
+        private int magic;
+
+        MoveInfo(DamageInfo info, int block, int magic) {
+            this.info = info;
+            this.block = block;
+            this.magic = magic;
+        }
     }
 }

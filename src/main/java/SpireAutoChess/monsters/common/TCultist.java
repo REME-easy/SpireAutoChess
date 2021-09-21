@@ -25,10 +25,16 @@ public class TCultist extends AbstractTeamMonster {
 
     public TCultist() {
         super(NAME, ID, MAX_HP, -8.0F, 10.0F, 230.0F, 240.0F, (String) null, 0.0F, 0.0F);
+        this.setDescriptionRange();
+        this.dialogX = this.drawX;
+        this.dialogY = this.drawY + 150.0F;
 
         this.firstMove = true;
 
-        this.damage.add(new DamageInfo(this, DAMAGE_1));
+        this.addMoveInfo(0, RITUAL_AMT);
+        this.addMoveInfo(new DamageInfo(this, DAMAGE_1));
+
+        this.maxUpgradeTimes = 2;
 
         this.loadAnimation("images/monsters/theBottom/cultist/skeleton.atlas",
                 "images/monsters/theBottom/cultist/skeleton.json", 1.0F);
@@ -46,17 +52,28 @@ public class TCultist extends AbstractTeamMonster {
     protected void getMove(int num) {
         if (this.firstMove) {
             this.firstMove = false;
-            this.setNextMove((byte) 1, Intent.BUFF, 0, () -> {
+            this.setNextMove((byte) 0, Intent.BUFF, 0, () -> {
                 playSfx();
                 // addToBot(new TalkAction(this, DIALOG[0]));
-                ApplyPowerToSelf(new RitualPower(this, RITUAL_AMT, true));
+                ApplyPowerToSelf(new RitualPower(this, getMagicNumber(0), true));
                 return false;
             });
         } else {
-            this.setNextMove((byte) 2, Intent.ATTACK, getDamage(0), () -> {
-                DamageFront(getDamageInfo(0));
+            this.setNextMove((byte) 1, Intent.ATTACK, getDamage(1), () -> {
+                DamageFront(getDamageInfo(1));
                 return false;
             });
+        }
+    }
+
+    @Override
+    public void upgrade(int level) {
+        super.upgrade(level);
+        switch (level) {
+            case 0:
+            case 1:
+                this.changeMagicNumber(0, 2);
+                break;
         }
     }
 

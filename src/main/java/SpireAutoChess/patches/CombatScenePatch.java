@@ -21,7 +21,7 @@ public class CombatScenePatch {
     static {
         ZoomCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         ZoomCamera.zoom += 0.2F;
-        ZoomCamera.position.set(Settings.WIDTH * 0.2F, Settings.HEIGHT * 0.5F, 0.0F);
+        ZoomCamera.position.set(Settings.WIDTH * 0.4F, Settings.HEIGHT * 0.5F, 0.0F);
         ZoomCamera.update();
     }
 
@@ -33,7 +33,6 @@ public class CombatScenePatch {
             sb.setProjectionMatrix(ZoomCamera.combined);
             CardCrawlGame.psb.setProjectionMatrix(ZoomCamera.combined);
             sb.begin();
-
         }
     }
 
@@ -54,7 +53,7 @@ public class CombatScenePatch {
             PrevX = InputHelper.mX;
             PrevY = InputHelper.mY;
             Position.set(InputHelper.mX, InputHelper.mY, 0.0F);
-            ZoomCamera.project(Position);
+            ZoomCamera.unproject(Position);
             InputHelper.mX = (int) Position.x;
             InputHelper.mY = (int) Position.y;
         }

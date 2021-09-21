@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.google.gson.Gson;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
@@ -24,9 +25,16 @@ import org.apache.logging.log4j.Logger;
 import SpireAutoChess.character.ChessPlayer;
 import SpireAutoChess.character.TeamMonsterGroup;
 import SpireAutoChess.helper.EventHelper;
+import SpireAutoChess.helper.MonsterManager;
 import SpireAutoChess.helper.SecondaryMagicVariable;
+import SpireAutoChess.monsters.AbstractTeamMonster;
 import SpireAutoChess.monsters.common.TCultist;
+import SpireAutoChess.monsters.common.TLouseDefensive;
+import SpireAutoChess.monsters.common.TLouseNormal;
+import SpireAutoChess.utils.OpenScreenCommand;
+import basemod.AutoAdd;
 import basemod.BaseMod;
+import basemod.devcommands.ConsoleCommand;
 import basemod.interfaces.AddAudioSubscriber;
 import basemod.interfaces.EditCardsSubscriber;
 import basemod.interfaces.EditCharactersSubscriber;
@@ -53,13 +61,13 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
     private static final String BG_SKILL_1024 = "ChessPlayerResources/img/1024/bg_skill.png";
     private static final String big_orb = "ChessPlayerResources/img/char/card_orb.png";
     private static final String energy_orb = "ChessPlayerResources/img/char/cost_orb.png";
-    private static final Color ORANGE = GetCharColor();
+    private static final Color CHAR_COLOR = GetCharColor();
 
     public ChessPlayerModCore() {
         BaseMod.subscribe(this);
-        BaseMod.addColor(CHESS_PLAYER_CARD, ORANGE, ORANGE, ORANGE, ORANGE, ORANGE, ORANGE, ORANGE, BG_ATTACK_512,
-                BG_SKILL_512, BG_POWER_512, energy_orb, BG_ATTACK_1024, BG_SKILL_1024, BG_POWER_1024, big_orb,
-                small_orb);
+        BaseMod.addColor(CHESS_PLAYER_CARD, CHAR_COLOR, CHAR_COLOR, CHAR_COLOR, CHAR_COLOR, CHAR_COLOR, CHAR_COLOR,
+                CHAR_COLOR, BG_ATTACK_512, BG_SKILL_512, BG_POWER_512, energy_orb, BG_ATTACK_1024, BG_SKILL_1024,
+                BG_POWER_1024, big_orb, small_orb);
     }
 
     public static void initialize() {
@@ -68,11 +76,11 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
 
     @Override
     public void receiveEditCharacters() {
-        logger.info("===小刻正在准备！===");
+        logger.info("===正在添加人物===");
         logger.info("正在添加" + CHESS_PLAYER.toString());
         BaseMod.addCharacter(new ChessPlayer(CardCrawlGame.playerName), MY_CHARACTER_BUTTON, MY_CHARACTER_PORTRAIT,
                 CHESS_PLAYER);
-        logger.info("===小刻准备完啦！===");
+        logger.info("===加载完成===");
     }
 
     public void receiveEditStrings() {
@@ -102,27 +110,9 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
     }
 
     public void receiveEditCards() {
-        logger.info("===小刻正在准备卡牌和法术！===");
+        logger.info("===正在加载友方怪物===");
         BaseMod.addDynamicVariable(new SecondaryMagicVariable());
-        // AutoAdd cards = new AutoAdd("ChessPlayerMod");
-        // cards.packageFilter(AbstractChessPlayerCard.class).setDefaultSeen(false).any(AbstractChessPlayerCard.class,
-        // ((info, card) -> {
-        // if (card != null) {
-        // BaseMod.addCard(card);
-        // if (info.seen) {
-        // UnlockTracker.unlockCard(card.cardID);
-        // }
-        // }
-        // }));
-
-        // AbstractSpell[] spells = new AbstractSpell[] {
-        // new FunSpraySpell(), new HotSpellSpell(), new SpellLikeFireworkSpell(),
-        // new VeryColdAxeSpell()
-        // };
-        // for (AbstractSpell s : spells) {
-        // AbstractSpell.AllSpells.put(s.ID, s);
-        // }
-        logger.info("===小刻随时可以出发！===");
+        logger.info("===加载完成===");
     }
 
     public void receiveEditRelics() {
@@ -135,7 +125,7 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
             lang = "zh";
         }
 
-        logger.info("===小刻的关键词===");
+        logger.info("===正在加载关键词===");
         String json = Gdx.files.internal("ChessPlayerResources/localization/ChessPlayerKeywords_" + lang + ".json")
                 .readString(String.valueOf(StandardCharsets.UTF_8));
         Keyword[] keywords = gson.fromJson(json, Keyword[].class);
@@ -145,25 +135,33 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
                 BaseMod.addKeyword("ChessPlayer", keyword.NAMES[0], keyword.NAMES, keyword.DESCRIPTION);
             }
         }
-        logger.info("===小刻的关键词也好啦===");
+        logger.info("===加载完成===");
     }
 
     @Override
     public void receiveAddAudio() {
-        BaseMod.addAudio("ChessPlayer_1", "ChessPlayerResources/sound/ChessPlayer_1.ogg");
-        BaseMod.addAudio("ChessPlayer_2", "ChessPlayerResources/sound/ChessPlayer_2.ogg");
-    }
 
-    @Override
-    public void receivePostInitialize() {
-        receiveAddMonster();
-        receiveAddEvent();
     }
 
     private void receiveAddMonster() {
+        logger.info("===正在加载友方怪物===");
+        BaseMod.addDynamicVariable(new SecondaryMagicVariable());
+
+        logger.info(Loader.isModLoaded("ChessPlayerMod"));
+        logger.info(AbstractTeamMonster.class.getPackage());
+        logger.info(Loader.MODINFOS);
+        new AutoAdd("ChessPlayerMod").setDefaultSeen(false).packageFilter("SpireAutoChess.monsters.common")
+                .any(AbstractTeamMonster.class, (info, monster) -> {
+                    MonsterManager.RegisterMonster(monster.id, monster);
+                });
+        logger.info("===加载完成===");
     }
 
     private void receiveAddEvent() {
+    }
+
+    private void receiveAddCommand() {
+        ConsoleCommand.addCommand("organize", OpenScreenCommand.class);
     }
 
     public static Color GetCharColor() {
@@ -175,12 +173,21 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
     }
 
     @Override
+    public void receivePostInitialize() {
+        receiveAddMonster();
+        receiveAddEvent();
+        receiveAddCommand();
+    }
+
+    @Override
     public void receiveOnBattleStart(AbstractRoom abstractRoom) {
         EventHelper.receiveOnBattleStart(abstractRoom);
     }
 
     @Override
     public void receiveStartGame() {
-        TeamMonsterGroup.Inst().addMonster(new TCultist(), new TCultist(), new TCultist());
+        // DEBUG
+        TeamMonsterGroup.Inst().addMonster(new TLouseDefensive(), new TLouseNormal(), new TCultist(), new TCultist(),
+                new TCultist());
     }
 }

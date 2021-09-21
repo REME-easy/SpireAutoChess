@@ -2,11 +2,37 @@
     "ChessPlayer_TCultist": {
         "NAME": "邪教徒",
         "MOVES": [
-            "每场战斗首次行动给予自身 #b3 层 #y仪式 。",
-            "造成 #b6 点 攻击伤害。"
+            "每场战斗首次行动给予自身 #bM 层 #y仪式 。",
+            "意图 #b1 ：造成 #bD 点 伤害。"
         ],
         "DIALOG": [
             " @咔咔@ ！"
         ]
+    },
+    "ChessPlayer_TLouseDefensive": {
+        "NAME": "绿色虱虫",
+        "MOVES": [
+            "意图 #b1 ：给予最前排友方 #bM 层 #y金属化 。",
+            "意图 #b2 ：造成 #bD 点 伤害。",
+            "战斗开始时获得 #bM 层 #y蜷缩 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TLouseNormal": {
+        "NAME": "红色虱虫",
+        "MOVES": [
+            "意图 #b1 ：给予最前排友方 #bM 点 #y力量 。",
+            "意图 #b2 ：造成 #bD 点 伤害。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TByrd": {
+        "NAME": "异鸟",
+        "MOVES": [
+            "意图 #b1 ：造成 #bD 点伤害 #bM 次。",
+            "意图 #b2 ：造成 #bD 点伤害。",
+            "意图 #b3 ：给予自身 #bM 点 #y力量 。"
+        ],
+        "DIALOG": []
     }
 }

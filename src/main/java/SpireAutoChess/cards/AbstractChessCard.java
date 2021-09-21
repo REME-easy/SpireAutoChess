@@ -1,17 +1,19 @@
 package SpireAutoChess.cards;
 
-import basemod.abstracts.CustomCard;
-
 import static SpireAutoChess.character.ChessPlayer.Enums.CHESS_PLAYER_CARD;
 
 import com.megacrit.cardcrawl.localization.CardStrings;
 
+import basemod.abstracts.CustomCard;
+
 public abstract class AbstractChessCard extends CustomCard {
+    public CardStrings strings;
+
     public int baseSecondaryMagicNum;
     public int SecondaryMagicNum;
     public boolean upgradedSecondaryMagicNum;
     public boolean isSecondaryMagicNumModified;
-    public CardStrings strings;
+    public boolean isEnchanting = false;
 
     public AbstractChessCard(String ID, CardStrings strings, int COST, CardType TYPE, CardRarity RARITY,
             CardTarget TARGET) {

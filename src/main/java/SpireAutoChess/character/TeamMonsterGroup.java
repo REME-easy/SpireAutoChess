@@ -10,11 +10,9 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireField;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInsertLocator;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInsertPatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
-import com.megacrit.cardcrawl.actions.common.RollMoveAction;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.MonsterGroup;
 import com.megacrit.cardcrawl.monsters.MonsterQueueItem;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
@@ -23,14 +21,15 @@ import com.megacrit.cardcrawl.vfx.PlayerTurnEffect;
 import com.megacrit.cardcrawl.vfx.combat.BattleStartEffect;
 
 import SpireAutoChess.helper.GenericHelper;
+import SpireAutoChess.monsters.AbstractTeamMonster;
 import basemod.BaseMod;
 import basemod.abstracts.CustomSavable;
 import basemod.interfaces.ISubscriber;
 import javassist.CtBehavior;
 
 public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<String>> {
-    public final ArrayList<AbstractMonster> Monsters = new ArrayList<>();
-    private AbstractMonster hoveredMonster;
+    public final ArrayList<AbstractTeamMonster> Monsters = new ArrayList<>();
+    private AbstractTeamMonster hoveredMonster;
 
     public static int maxSize = 5;
 
@@ -38,7 +37,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
         return MonstersFields.Monsters.get(AbstractDungeon.player);
     }
 
-    public TeamMonsterGroup(ArrayList<AbstractMonster> input) {
+    public TeamMonsterGroup(ArrayList<AbstractTeamMonster> input) {
         this.hoveredMonster = null;
         this.Monsters.addAll(input);
         BaseMod.subscribe(this);
@@ -49,18 +48,18 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
         this(new ArrayList<>());
     }
 
-    public void addMonster(AbstractMonster... o) {
-        for (AbstractMonster m : o) {
+    public void addMonster(AbstractTeamMonster... o) {
+        for (AbstractTeamMonster m : o) {
             this.Monsters.add(m);
         }
     }
 
-    public static ArrayList<AbstractMonster> GetMonsters() {
+    public static ArrayList<AbstractTeamMonster> GetMonsters() {
         return MonstersFields.Monsters.get(AbstractDungeon.player).Monsters;
     }
 
-    public static void ApplyFuncToEachMonster(Function<AbstractMonster, Boolean> func) {
-        for (AbstractMonster m : GetMonsters()) {
+    public static void ApplyFuncToEachMonster(Function<AbstractTeamMonster, Boolean> func) {
+        for (AbstractTeamMonster m : GetMonsters()) {
             if (func.apply(m))
                 return;
         }
@@ -69,16 +68,16 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     private void usePreBattleAction() {
         if (!AbstractDungeon.loading_post_combat) {
             for (int i = 0; i < Monsters.size(); i++) {
-                AbstractMonster m = Monsters.get(i);
+                AbstractTeamMonster m = Monsters.get(i);
                 m.usePreBattleAction();
-                GenericHelper.addToBot(new RollMoveAction(m));
-                GenericHelper.MoveMonster(m, i * 250.0F * Settings.scale, AbstractDungeon.floorY);
+                // GenericHelper.addToBot(new RollMoveAction(m));
+                GenericHelper.MoveMonster(m, (i - 1) * 200.0F * Settings.scale, AbstractDungeon.floorY);
             }
         }
     }
 
     private void atEndOfTurn() {
-        for (AbstractMonster m : this.Monsters) {
+        for (AbstractTeamMonster m : this.Monsters) {
             m.applyEndOfTurnTriggers();
             // for (AbstractPower p : m.powers) {
             // p.atEndOfRound();
@@ -88,7 +87,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     }
 
     private void atStartOfTurn() {
-        for (AbstractMonster m : this.Monsters) {
+        for (AbstractTeamMonster m : this.Monsters) {
             if (!m.hasPower("Barricade")) {
                 m.loseBlock();
             }
@@ -97,15 +96,15 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
         }
     }
 
-    public AbstractMonster GetMonsterByIndex(int index) {
+    public AbstractTeamMonster GetMonsterByIndex(int index) {
         if (index < 0) {
-            return this.Monsters.get(this.Monsters.size() - index);
+            return this.Monsters.get(this.Monsters.size() + index);
         }
         return this.Monsters.get(index);
     }
 
-    public AbstractMonster GetMonsterByID(String id) {
-        for (AbstractMonster m : Monsters) {
+    public AbstractTeamMonster GetMonsterByID(String id) {
+        for (AbstractTeamMonster m : Monsters) {
             if (id.equals(m.id)) {
                 return m;
             }
@@ -114,30 +113,30 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     }
 
     public void queueMonsters() {
-        for (AbstractMonster m : this.Monsters) {
+        for (AbstractTeamMonster m : this.Monsters) {
             if (!m.isDeadOrEscaped() || m.halfDead) {
                 AbstractDungeon.actionManager.monsterQueue.add(new MonsterQueueItem(m));
             }
         }
     }
 
-    public void ShowIntent() {
-        for (AbstractMonster m : this.Monsters) {
+    public void showIntent() {
+        for (AbstractTeamMonster m : this.Monsters) {
             m.createIntent();
         }
         GenericHelper.info("intent showed");
     }
 
     public void applyPowers() {
-        for (AbstractMonster m : this.Monsters) {
+        for (AbstractTeamMonster m : this.Monsters) {
             if (!m.isDeadOrEscaped() || m.halfDead) {
                 m.applyPowers();
             }
         }
     }
 
-    public void Init() {
-        for (AbstractMonster m : this.Monsters) {
+    public void init() {
+        for (AbstractTeamMonster m : this.Monsters) {
             if (!m.isDeadOrEscaped() || m.halfDead) {
                 m.init();
             }
@@ -146,7 +145,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
 
     public void update() {
         for (int i = this.Monsters.size() - 1; i >= 0; i--) {
-            AbstractMonster m = this.Monsters.get(i);
+            AbstractTeamMonster m = this.Monsters.get(i);
             m.update();
             if (m.isDead) {
                 this.Monsters.remove(m);
@@ -155,7 +154,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
         if (AbstractDungeon.screen != AbstractDungeon.CurrentScreen.DEATH) {
             this.hoveredMonster = null;
 
-            for (AbstractMonster m : this.Monsters) {
+            for (AbstractTeamMonster m : this.Monsters) {
                 if (!m.isDying) {
                     m.hb.update();
                 }
@@ -173,7 +172,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     }
 
     private void updateAnimations() {
-        for (AbstractMonster m : this.Monsters) {
+        for (AbstractTeamMonster m : this.Monsters) {
             m.updatePowers();
         }
     }
@@ -185,14 +184,14 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
                 this.hoveredMonster.renderTip(sb);
             }
 
-            for (AbstractMonster m : this.Monsters) {
+            for (AbstractTeamMonster m : this.Monsters) {
                 m.render(sb);
             }
         }
     }
 
     public void renderReticle(SpriteBatch sb) {
-        for (AbstractMonster m : this.Monsters) {
+        for (AbstractTeamMonster m : this.Monsters) {
             if (!m.isDying) {
                 m.renderReticle(sb);
             }
@@ -207,7 +206,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     @Override
     public ArrayList<String> onSave() {
         ArrayList<String> monsters = new ArrayList<>();
-        for (AbstractMonster m : this.Monsters) {
+        for (AbstractTeamMonster m : this.Monsters) {
             monsters.add(m.id);
         }
         return monsters;
@@ -289,7 +288,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
         public static void Insert(BattleStartEffect _inst) {
             TeamMonsterGroup tmp = MonstersFields.Monsters.get(AbstractDungeon.player);
             if (tmp.Monsters.size() > 0) {
-                for (AbstractMonster o : tmp.Monsters) {
+                for (AbstractTeamMonster o : tmp.Monsters) {
                     o.showHealthBar();
                     o.healthBarRevivedEvent();
                 }
@@ -311,7 +310,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     public static class ShowIntentStartBattlePatch {
         @SpireInsertPatch(locator = Locator.class)
         public static void Insert(BattleStartEffect _inst) {
-            Inst().ShowIntent();
+            Inst().showIntent();
         }
 
         private static class Locator extends SpireInsertLocator {
@@ -328,7 +327,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     @SpirePatch(clz = PlayerTurnEffect.class, method = SpirePatch.CONSTRUCTOR)
     public static class ShowIntentPatch {
         public static void Postfix(PlayerTurnEffect _inst) {
-            Inst().ShowIntent();
+            Inst().showIntent();
         }
     }
 
@@ -343,7 +342,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     @SpirePatch(clz = MonsterGroup.class, method = "init")
     public static class RollMovePatch {
         public static void Postfix(MonsterGroup _inst) {
-            Inst().Init();
+            Inst().init();
         }
     }
 }

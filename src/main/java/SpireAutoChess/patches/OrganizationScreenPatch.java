@@ -3,8 +3,12 @@ package SpireAutoChess.patches;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.evacipated.cardcrawl.modthespire.lib.*;
-
+import com.evacipated.cardcrawl.modthespire.lib.LineFinder;
+import com.evacipated.cardcrawl.modthespire.lib.Matcher;
+import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
+import com.evacipated.cardcrawl.modthespire.lib.SpireInsertLocator;
+import com.evacipated.cardcrawl.modthespire.lib.SpireInsertPatch;
+import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
 import SpireAutoChess.screens.OrganizationScreen;
@@ -13,7 +17,7 @@ import javassist.CtBehavior;
 public class OrganizationScreenPatch {
     public static class Enum {
         @SpireEnum
-        static AbstractDungeon.CurrentScreen ORGANIZATION_SCREEN;
+        public static AbstractDungeon.CurrentScreen ORGANIZATION_SCREEN;
 
         public Enum() {
         }

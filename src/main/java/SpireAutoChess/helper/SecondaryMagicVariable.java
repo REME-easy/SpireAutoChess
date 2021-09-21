@@ -1,16 +1,16 @@
 package SpireAutoChess.helper;
 
-import basemod.abstracts.DynamicVariable;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 
 import SpireAutoChess.cards.AbstractChessCard;
+import basemod.abstracts.DynamicVariable;
 
 public class SecondaryMagicVariable extends DynamicVariable {
     public SecondaryMagicVariable() {
     }
 
     public String key() {
-        return "CM2";
+        return "CPM";
     }
 
     public boolean isModified(AbstractCard card) {
