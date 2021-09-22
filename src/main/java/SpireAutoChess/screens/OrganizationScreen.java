@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
@@ -47,6 +48,8 @@ public class OrganizationScreen implements ScrollBarListener {
     private HorizontalScrollBar scrollBar;
     public ConfirmButton confirmButton;
     public MonsterUpgradeScreen upgradeScreen;
+
+    public static final String[] TEXT = CardCrawlGame.languagePack.getUIString("ChessPlayer_OrganizationScreen").TEXT;
 
     public OrganizationScreen() {
         this.scrollX = Settings.WIDTH - 300.0F * Settings.xScale;
@@ -95,6 +98,7 @@ public class OrganizationScreen implements ScrollBarListener {
         confirmButton.isDisabled = false;
         overlayMenu.proceedButton.hide();
         overlayMenu.cancelButton.hide();
+        AbstractDungeon.dynamicBanner.appear(TEXT[0]);
         overlayMenu.hideCombatPanels();
         confirmButton.hideInstantly();
         confirmButton.show();
@@ -106,6 +110,7 @@ public class OrganizationScreen implements ScrollBarListener {
         AbstractDungeon.isScreenUp = true;
         AbstractDungeon.overlayMenu.proceedButton.hide();
         AbstractDungeon.overlayMenu.endTurnButton.disable();
+        AbstractDungeon.dynamicBanner.appear(TEXT[0]);
         GenericHelper.info("screen reopen");
     }
 
@@ -116,6 +121,7 @@ public class OrganizationScreen implements ScrollBarListener {
         confirmButton.hide();
         AbstractDungeon.isScreenUp = false;
         AbstractDungeon.closeCurrentScreen();
+        AbstractDungeon.dynamicBanner.hide();
         overlayMenu.showCombatPanels();
     }
 

@@ -45,7 +45,6 @@ public class TCultist extends AbstractTeamMonster {
     @Override
     public void usePreBattleAction() {
         super.usePreBattleAction();
-        this.firstMove = true;
     }
 
     @Override

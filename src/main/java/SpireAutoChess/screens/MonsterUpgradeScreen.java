@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
@@ -30,6 +31,7 @@ public class MonsterUpgradeScreen {
     private AbstractTeamMonster upgradeMonster;
 
     private static final float START_Y = (float) Settings.HEIGHT / 2.0F - 32.0F;
+    public static final String[] TEXT = CardCrawlGame.languagePack.getUIString("ChessPlayer_OrganizationScreen").TEXT;
 
     public MonsterUpgradeScreen() {
         this.confirmButton = new ConfirmButton();
@@ -47,11 +49,14 @@ public class MonsterUpgradeScreen {
         confirmButton.isDisabled = false;
         confirmButton.hideInstantly();
         confirmButton.show();
+        cancelButton.hideInstantly();
+        cancelButton.show(TEXT[5]);
     }
 
     public void close() {
         this.isOpen = false;
         confirmButton.hide();
+        cancelButton.hide();
     }
 
     public void update() {
@@ -86,6 +91,7 @@ public class MonsterUpgradeScreen {
         TipHelper.renderGenericTip(Settings.WIDTH * 0.6F, Settings.HEIGHT * 0.6F, upgradeMonster.name,
                 upgradeMonster.getDescription());
         this.confirmButton.render(sb);
+        this.cancelButton.render(sb);
         this.monster.render(sb);
     }
 
