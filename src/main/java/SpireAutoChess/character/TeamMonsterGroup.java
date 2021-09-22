@@ -20,6 +20,7 @@ import com.megacrit.cardcrawl.ui.buttons.PeekButton;
 import com.megacrit.cardcrawl.vfx.PlayerTurnEffect;
 import com.megacrit.cardcrawl.vfx.combat.BattleStartEffect;
 
+import SpireAutoChess.character.TeamMonsterGroup.MonsterSaveInfo;
 import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.monsters.AbstractTeamMonster;
 import basemod.BaseMod;
@@ -27,7 +28,7 @@ import basemod.abstracts.CustomSavable;
 import basemod.interfaces.ISubscriber;
 import javassist.CtBehavior;
 
-public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<String>> {
+public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<MonsterSaveInfo>> {
     public final ArrayList<AbstractTeamMonster> Monsters = new ArrayList<>();
     private AbstractTeamMonster hoveredMonster;
 
@@ -199,15 +200,15 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     }
 
     @Override
-    public void onLoad(ArrayList<String> monsters) {
+    public void onLoad(ArrayList<MonsterSaveInfo> monsters) {
 
     }
 
     @Override
-    public ArrayList<String> onSave() {
-        ArrayList<String> monsters = new ArrayList<>();
+    public ArrayList<MonsterSaveInfo> onSave() {
+        ArrayList<MonsterSaveInfo> monsters = new ArrayList<>();
         for (AbstractTeamMonster m : this.Monsters) {
-            monsters.add(m.id);
+            monsters.add(new MonsterSaveInfo(m.id, m.upgradedTimes));
         }
         return monsters;
     }
@@ -343,6 +344,16 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<St
     public static class RollMovePatch {
         public static void Postfix(MonsterGroup _inst) {
             Inst().init();
+        }
+    }
+
+    public class MonsterSaveInfo {
+        public String id;
+        public int upgradedTimes;
+
+        public MonsterSaveInfo(String id, int upgradedTimes) {
+            this.id = id;
+            this.upgradedTimes = upgradedTimes;
         }
     }
 }

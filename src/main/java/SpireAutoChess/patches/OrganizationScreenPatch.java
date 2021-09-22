@@ -11,6 +11,7 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireInsertPatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
+import SpireAutoChess.screens.MonsterShopScreen;
 import SpireAutoChess.screens.OrganizationScreen;
 import javassist.CtBehavior;
 
@@ -19,20 +20,33 @@ public class OrganizationScreenPatch {
         @SpireEnum
         public static AbstractDungeon.CurrentScreen ORGANIZATION_SCREEN;
 
+        @SpireEnum
+        public static AbstractDungeon.CurrentScreen MONSTER_SHOP_SCREEN;
+
         public Enum() {
         }
     }
 
     @SpirePatch(clz = AbstractDungeon.class, method = "openPreviousScreen")
-    public static class OpenPreviousScreen {
-        public OpenPreviousScreen() {
-        }
-
+    public static class OpenPreviousScreenPatch {
         public static void Postfix(AbstractDungeon.CurrentScreen s) {
             if (s == Enum.ORGANIZATION_SCREEN) {
                 OrganizationScreen.Inst().reopen();
+            } else if (s == Enum.MONSTER_SHOP_SCREEN) {
+                MonsterShopScreen.Inst().reopen();
             }
 
+        }
+    }
+
+    @SpirePatch(clz = AbstractDungeon.class, method = "closeCurrentScreen")
+    public static class CloseCurrentScreenPatch {
+        public static void Postfix() {
+            // if (AbstractDungeon.screen == Enum.ORGANIZATION_SCREEN) {
+            // OrganizationScreen.Inst().close();
+            // } else if (AbstractDungeon.screen == Enum.MONSTER_SHOP_SCREEN) {
+            // MonsterShopScreen.Inst().close();
+            // }
         }
     }
 
@@ -45,6 +59,8 @@ public class OrganizationScreenPatch {
         public static void Insert(AbstractDungeon __instance, SpriteBatch sb) {
             if (AbstractDungeon.screen == Enum.ORGANIZATION_SCREEN) {
                 OrganizationScreen.Inst().render(sb);
+            } else if (AbstractDungeon.screen == Enum.MONSTER_SHOP_SCREEN) {
+                MonsterShopScreen.Inst().render(sb);
             }
         }
 
@@ -69,6 +85,8 @@ public class OrganizationScreenPatch {
         public static void Insert(AbstractDungeon __instance) {
             if (AbstractDungeon.screen == Enum.ORGANIZATION_SCREEN) {
                 OrganizationScreen.Inst().update();
+            } else if (AbstractDungeon.screen == Enum.MONSTER_SHOP_SCREEN) {
+                MonsterShopScreen.Inst().update();
             }
 
         }

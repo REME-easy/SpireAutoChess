@@ -259,7 +259,7 @@ public class OrganizationScreen implements ScrollBarListener {
         // if (!(this.shouldShowScrollBar = this.currentWidth > Settings.WIDTH * 1.5F))
         // {
         this.scrollLowerBound = -500.0F;
-        this.scrollUpperBound = Settings.WIDTH - this.currentWidth + 300.0F;
+        this.scrollUpperBound = Math.abs(Settings.WIDTH - this.currentWidth) + 300.0F;
         this.shouldShowScrollBar = true;
         this.resetScrolling();
         // }

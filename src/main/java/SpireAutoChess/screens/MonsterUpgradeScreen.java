@@ -9,7 +9,6 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.TipHelper;
-import com.megacrit.cardcrawl.ui.buttons.CancelButton;
 import com.megacrit.cardcrawl.ui.buttons.ConfirmButton;
 
 import SpireAutoChess.helper.CustomTipRenderer;
@@ -25,7 +24,7 @@ public class MonsterUpgradeScreen {
     private float arrowScale3;
     private float arrowTimer;
     public ConfirmButton confirmButton;
-    public CancelButton cancelButton;
+    public EmptyCancelButton cancelButton;
 
     private AbstractTeamMonster monster;
     private AbstractTeamMonster upgradeMonster;
@@ -35,7 +34,7 @@ public class MonsterUpgradeScreen {
 
     public MonsterUpgradeScreen() {
         this.confirmButton = new ConfirmButton();
-        this.cancelButton = new CancelButton();
+        this.cancelButton = new EmptyCancelButton();
     }
 
     public void open(AbstractTeamMonster monster) {

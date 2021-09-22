@@ -32,6 +32,7 @@ import SpireAutoChess.monsters.common.TCultist;
 import SpireAutoChess.monsters.common.TLouseDefensive;
 import SpireAutoChess.monsters.common.TLouseNormal;
 import SpireAutoChess.utils.OpenScreenCommand;
+import SpireAutoChess.utils.ShopScreenCommand;
 import basemod.AutoAdd;
 import basemod.BaseMod;
 import basemod.devcommands.ConsoleCommand;
@@ -162,6 +163,7 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
 
     private void receiveAddCommand() {
         ConsoleCommand.addCommand("organize", OpenScreenCommand.class);
+        ConsoleCommand.addCommand("monstershop", ShopScreenCommand.class);
     }
 
     public static Color GetCharColor() {
