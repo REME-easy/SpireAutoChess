@@ -51,5 +51,68 @@
             "意图 #b1 ：造成 #bD 点伤害。"
         ],
         "DIALOG": []
+    },
+    "ChessPlayer_TBanditBear": {
+        "NAME": "熊",
+        "MOVES": [
+            "获得 #b金币 时，额外获得 #bM 点。",
+            "意图 #b1 ：造成 #bD 点伤害。",
+            "意图 #b2 ：获得 #B 点 #y格挡 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TBanditChild": {
+        "NAME": "尖尖",
+        "MOVES": [
+            "战斗开始时，你每有 #bM 点 #y金币获得 #b1 点 #y力量 。",
+            "意图 #b1 ：造成 #bD 点伤害 #bM 次。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TBanditLeader": {
+        "NAME": "罗密欧",
+        "MOVES": [
+            "友方攻击时，获得 #bM 点 #y金币 。",
+            "意图 #b1 ：造成 #bD 点伤害。",
+            "意图 #b2 ：使所有敌人本回合失去 #bM 点 #y力量 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TChosen": {
+        "NAME": "被拣选者",
+        "MOVES": [
+            "战斗胜利时，向卡组添加一张战斗开始获得 #bM 点 #y力量 的 #y强化 到随机位置。",
+            "意图 #b1 ：造成 #bD 点伤害。",
+            "意图 #b2 ：造成 #bD 点伤害，给予 #bM 层 #y虚弱 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TSpiker": {
+        "NAME": "钉刺机",
+        "MOVES": [
+            " #y机械 。TODO",
+            "意图 #b1 ：获得 #bM 点 #y荆棘 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TWrithingMass": {
+        "NAME": "扭曲团块",
+        "MOVES": [
+            " #y生态 。 NL 受到伤害时，卡组中添加一张 #y寄生体 ，并改变意图。",
+            "意图 #b1 ：造成 #bD 点伤害。",
+            "意图 #b2 ：造成 #bD 点伤害。",
+            "意图 #b3 ：造成 #bD 点伤害 #bM 次。",
+            "意图 #b4 ：卡组中添加一张 #y寄生体 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TLagavulin": {
+        "NAME": "乐加维林",
+        "MOVES": [
+            " #y生态 。",
+            "意图 #b1 ~ #b2 ：造成 #bD 点伤害。",
+            "意图 #b3 ：使目标失去 #bM 点 #y力量 。"
+        ],
+        "DIALOG": []
     }
 }

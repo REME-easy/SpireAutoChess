@@ -1,5 +1,12 @@
 package SpireAutoChess.helper;
 
+import static com.megacrit.cardcrawl.helpers.FontHelper.cardDescFont_N;
+import static com.megacrit.cardcrawl.helpers.FontHelper.layout;
+import static com.megacrit.cardcrawl.helpers.FontHelper.renderFontCentered;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,36 +16,34 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.helpers.*;
+import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.helpers.GameDictionary;
+import com.megacrit.cardcrawl.helpers.ImageMaster;
+import com.megacrit.cardcrawl.helpers.PowerTip;
+import com.megacrit.cardcrawl.helpers.TipHelper;
 import com.megacrit.cardcrawl.localization.UIStrings;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import static com.megacrit.cardcrawl.helpers.FontHelper.*;
 
 public class CustomTipRenderer {
     private static final UIStrings uiStrings;
     public static final String[] TEXT;
     private static final Logger logger;
     private static boolean renderedTipThisFrame;
-    private static boolean isCard;
     private static float drawX;
     private static float drawY;
     private static ArrayList<String> KEYWORDS;
     private static ArrayList<PowerTip> POWER_TIPS;
     private static String HEADER;
     private static String BODY;
-    private static AbstractCard card;
     private static final Color BASE_COLOR;
-    private static final float CARD_TIP_PAD;
+    // private static final float CARD_TIP_PAD;
     private static final float SHADOW_DIST_Y;
     private static final float SHADOW_DIST_X;
     private static final float BOX_EDGE_H;
     private static final float BOX_BODY_H;
-    private static final float BOX_W;
+    public static final float BOX_W;
     private static GlyphLayout gl;
     private static float textHeight;
     private static final float TEXT_OFFSET_X;
@@ -58,7 +63,6 @@ public class CustomTipRenderer {
                     || AbstractDungeon.player.isDraggingCard && !Settings.isTouchScreen)) {
                 HEADER = null;
                 BODY = null;
-                card = null;
                 renderedTipThisFrame = false;
                 return;
             }
@@ -66,28 +70,25 @@ public class CustomTipRenderer {
             if (Settings.isTouchScreen && AbstractDungeon.player != null && AbstractDungeon.player.isHoveringDropZone) {
                 HEADER = null;
                 BODY = null;
-                card = null;
                 renderedTipThisFrame = false;
                 return;
             }
 
-            if (isCard && card != null) {
-                if (card.current_x > (float) Settings.WIDTH * 0.75F) {
-                    renderKeywords(card.current_x - AbstractCard.IMG_WIDTH / 2.0F - CARD_TIP_PAD - BOX_W,
-                            card.current_y + AbstractCard.IMG_HEIGHT / 2.0F - BOX_EDGE_H, sb, KEYWORDS);
+            if (!KEYWORDS.isEmpty()) {
+                if (drawX > (float) Settings.WIDTH * 0.75F) {
+                    renderKeywords(drawX - BOX_W, drawY, sb, KEYWORDS);
                 } else {
-                    renderKeywords(card.current_x + AbstractCard.IMG_WIDTH / 2.0F + CARD_TIP_PAD,
-                            card.current_y + AbstractCard.IMG_HEIGHT / 2.0F - BOX_EDGE_H, sb, KEYWORDS);
+                    renderKeywords(drawX + BOX_W, drawY, sb, KEYWORDS);
                 }
-
-                card = null;
-                isCard = false;
-            } else if (HEADER != null) {
+                KEYWORDS.clear();
+            }
+            if (HEADER != null) {
                 textHeight = -FontHelper.getSmartHeight(FontHelper.tipBodyFont, BODY, BODY_TEXT_WIDTH,
                         TIP_DESC_LINE_SPACING) - 7.0F * Settings.scale;
                 renderTipBox(drawX, drawY, sb, HEADER, BODY);
                 HEADER = null;
-            } else {
+            }
+            if (!POWER_TIPS.isEmpty()) {
                 renderPowerTips(drawX, drawY, sb, POWER_TIPS);
             }
 
@@ -111,27 +112,28 @@ public class CustomTipRenderer {
 
     }
 
-    public static void queuePowerTips(float x, float y, ArrayList<PowerTip> powerTips) {
-        if (!renderedTipThisFrame) {
-            renderedTipThisFrame = true;
-            drawX = x;
-            drawY = y;
-            POWER_TIPS = powerTips;
-        } else if (HEADER == null && !KEYWORDS.isEmpty()) {
-            logger.info("! " + KEYWORDS.get(0));
+    public static void renderGenericTip(float x, float y, String header, String body, ArrayList<String> keywords) {
+        if (!Settings.hidePopupDetails) {
+            if (!renderedTipThisFrame) {
+                renderedTipThisFrame = true;
+                HEADER = header;
+                BODY = body;
+                drawX = x;
+                drawY = y;
+                convertToReadable(keywords);
+                KEYWORDS = keywords;
+            }
         }
-
     }
 
-    public static void renderTipForCard(AbstractCard c, SpriteBatch sb, ArrayList<String> keywords) {
+    public static void renderKeywords(float x, float y, ArrayList<String> keywords) {
         if (!renderedTipThisFrame) {
-            isCard = true;
-            card = c;
+            drawX = x;
+            drawY = y;
             convertToReadable(keywords);
             KEYWORDS = keywords;
             renderedTipThisFrame = true;
         }
-
     }
 
     private static void convertToReadable(ArrayList<String> keywords) {
@@ -336,18 +338,31 @@ public class CustomTipRenderer {
         }
     }
 
+    public class TipRenderInfo {
+        public float DrawX;
+        public float DrawY;
+        public String Header;
+        public String Body;
+
+        public TipRenderInfo(float drawX, float drawY, String header, String body) {
+            DrawX = drawX;
+            DrawY = drawY;
+            Header = header;
+            Body = body;
+        }
+    }
+
     static {
         uiStrings = CardCrawlGame.languagePack.getUIString("TipHelper");
         TEXT = uiStrings.TEXT;
         logger = LogManager.getLogger(TipHelper.class.getName());
         renderedTipThisFrame = false;
-        isCard = false;
         KEYWORDS = new ArrayList<>();
         POWER_TIPS = new ArrayList<>();
         HEADER = null;
         BODY = null;
         BASE_COLOR = new Color(1.0F, 0.9725F, 0.8745F, 1.0F);
-        CARD_TIP_PAD = 12.0F * Settings.scale;
+        // CARD_TIP_PAD = 12.0F * Settings.scale;
         SHADOW_DIST_Y = 14.0F * Settings.scale;
         SHADOW_DIST_X = 9.0F * Settings.scale;
         BOX_EDGE_H = 32.0F * Settings.scale;

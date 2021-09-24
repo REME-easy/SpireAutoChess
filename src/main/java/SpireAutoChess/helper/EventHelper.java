@@ -16,6 +16,8 @@ public class EventHelper {
     public static final ArrayList<EnemyDeathSubscriber> ENEMY_DEATH_SUBSCRIBERS = new ArrayList<>();
     public static final ArrayList<StartOfTurnSubscriber> START_OF_TURN_SUBSCRIBERS = new ArrayList<>();
     public static final ArrayList<EndOfTurnSubscriber> END_OF_TURN_SUBSCRIBERS = new ArrayList<>();
+    public static final ArrayList<TeamMonsterChangePositionSubscriber> TEAM_MONSTER_CHANGE_POSITION_SUBSCRIBERS = new ArrayList<>();
+    public static final ArrayList<TeamMonsterRemoveSubscriber> TEAM_MONSTER_REMOVE_SUBSCRIBERS = new ArrayList<>();
 
     private static <T> void subscribeIfInstance(ArrayList<T> list, CustomSubscriber sub, Class<T> clazz) {
         if (clazz.isInstance(sub)) {
@@ -29,6 +31,8 @@ public class EventHelper {
         subscribeIfInstance(ENEMY_DEATH_SUBSCRIBERS, sub, EnemyDeathSubscriber.class);
         subscribeIfInstance(START_OF_TURN_SUBSCRIBERS, sub, StartOfTurnSubscriber.class);
         subscribeIfInstance(END_OF_TURN_SUBSCRIBERS, sub, EndOfTurnSubscriber.class);
+        subscribeIfInstance(TEAM_MONSTER_CHANGE_POSITION_SUBSCRIBERS, sub, TeamMonsterChangePositionSubscriber.class);
+        subscribeIfInstance(TEAM_MONSTER_REMOVE_SUBSCRIBERS, sub, TeamMonsterRemoveSubscriber.class);
     }
 
     public static void receiveOnBattleStart(AbstractRoom abstractRoom) {
@@ -39,6 +43,8 @@ public class EventHelper {
         ENEMY_DEATH_SUBSCRIBERS.clear();
         START_OF_TURN_SUBSCRIBERS.clear();
         END_OF_TURN_SUBSCRIBERS.clear();
+        TEAM_MONSTER_CHANGE_POSITION_SUBSCRIBERS.clear();
+        TEAM_MONSTER_REMOVE_SUBSCRIBERS.clear();
 
         for (AbstractCard card : AbstractDungeon.player.masterDeck.group) {
             if (card instanceof CustomSubscriber) {
@@ -80,6 +86,14 @@ public class EventHelper {
 
     public interface EnemyDeathSubscriber extends CustomSubscriber {
         void OnMonsterDeath(AbstractMonster monster);
+    }
+
+    public interface TeamMonsterChangePositionSubscriber extends CustomSubscriber {
+        void OnChangPosition(int source, int target);
+    }
+
+    public interface TeamMonsterRemoveSubscriber extends CustomSubscriber {
+        void OnRemoveMonster(int position);
     }
 
 }

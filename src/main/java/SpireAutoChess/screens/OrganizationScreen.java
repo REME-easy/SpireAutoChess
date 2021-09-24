@@ -3,6 +3,7 @@ package SpireAutoChess.screens;
 import static com.megacrit.cardcrawl.dungeons.AbstractDungeon.overlayMenu;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,9 +23,9 @@ import SpireAutoChess.helper.CustomTipRenderer;
 import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.helper.MonsterManager;
 import SpireAutoChess.monsters.AbstractTeamMonster;
-import SpireAutoChess.patches.OrganizationScreenPatch;
+import SpireAutoChess.patches.CustomScreenQueuePatch.ICustomScreen;
 
-public class OrganizationScreen implements ScrollBarListener {
+public class OrganizationScreen implements ScrollBarListener, ICustomScreen {
     private static OrganizationScreen _inst;
 
     public static OrganizationScreen Inst() {
@@ -36,7 +37,10 @@ public class OrganizationScreen implements ScrollBarListener {
     public ArrayList<AbstractTeamMonster> teamMonsters;
     public ArrayList<UpgradeButton> upgradeButtons;
     public ArrayList<SellButton> sellButtons;
+    public AbstractTeamMonster selectedMonster;
+    public int selectedIndex;
 
+    public boolean isOpen = false;
     private boolean grabbedScreen = false;
     private float grabStartX = 0.0F;
     private float scrollX;
@@ -70,11 +74,12 @@ public class OrganizationScreen implements ScrollBarListener {
     }
 
     public void open(AbstractTeamMonster... m) {
+        currentWidth = 0.0F;
+        this.isOpen = true;
         this.addMonsters(m);
         for (AbstractMonster monster : m) {
             monster.showHealthBar();
         }
-        AbstractDungeon.screen = OrganizationScreenPatch.Enum.ORGANIZATION_SCREEN;
         AbstractDungeon.topPanel.unhoverHitboxes();
         AbstractDungeon.isScreenUp = true;
         confirmButton.isDisabled = false;
@@ -87,12 +92,13 @@ public class OrganizationScreen implements ScrollBarListener {
 
     public void open(TeamMonsterGroup group) {
         currentWidth = 0.0F;
+        this.isOpen = true;
+        this.queueToFont();
         for (AbstractTeamMonster m : group.Monsters) {
             AbstractTeamMonster inst = MonsterManager.GetMonsterInstance(m.id);
             this.addMonsters(inst);
             inst.showHealthBar();
         }
-        AbstractDungeon.screen = OrganizationScreenPatch.Enum.ORGANIZATION_SCREEN;
         AbstractDungeon.topPanel.unhoverHitboxes();
         AbstractDungeon.isScreenUp = true;
         confirmButton.isDisabled = false;
@@ -105,7 +111,7 @@ public class OrganizationScreen implements ScrollBarListener {
     }
 
     public void reopen() {
-        AbstractDungeon.screen = OrganizationScreenPatch.Enum.ORGANIZATION_SCREEN;
+        this.isOpen = true;
         AbstractDungeon.topPanel.unhoverHitboxes();
         AbstractDungeon.isScreenUp = true;
         AbstractDungeon.overlayMenu.proceedButton.hide();
@@ -115,12 +121,12 @@ public class OrganizationScreen implements ScrollBarListener {
     }
 
     public void close() {
+        this.isOpen = false;
         this.teamMonsters.clear();
         this.upgradeButtons.clear();
         this.sellButtons.clear();
         confirmButton.hide();
         AbstractDungeon.isScreenUp = false;
-        AbstractDungeon.closeCurrentScreen();
         AbstractDungeon.dynamicBanner.hide();
         overlayMenu.showCombatPanels();
     }
@@ -193,25 +199,58 @@ public class OrganizationScreen implements ScrollBarListener {
 
         for (int i = 0; i < teamSize; i++) {
             AbstractTeamMonster m = this.teamMonsters.get(i);
-            GenericHelper.MoveMonster(m, preWidth - scrollX, m.drawY);
+            float targetX = preWidth - scrollX;
+            float targetY = AbstractDungeon.floorY;
+            if (m != selectedMonster) {
+                if (!m.isMovingToTarget)
+                    GenericHelper.MoveMonster(m, preWidth - scrollX, m.drawY);
+            } else {
+                GenericHelper.MoveMonster(m, InputHelper.mX - m.hb_w / 2.0F, InputHelper.mY - m.hb_h / 2.0F);
+            }
+
             preWidth += m.hb_w * 2.0F;
 
             m.update();
             m.hb.update();
             if (m.hb.hovered) {
-                CustomTipRenderer.renderGenericTip(m.drawX + m.hb_w, m.drawY + m.hb_h / 2.0F, m.name,
-                        m.getDescription());
+                if (selectedMonster == null) {
+                    if (m.drawX < Settings.WIDTH * 0.75F) {
+                        CustomTipRenderer.renderGenericTip(m.drawX + m.hb_w, m.drawY + m.hb_h / 2.0F, m.name,
+                                m.getDescription(), m.keywords);
+                    } else {
+                        CustomTipRenderer.renderGenericTip(m.drawX - m.hb_w - CustomTipRenderer.BOX_W,
+                                m.drawY + m.hb_h / 2.0F, m.name, m.getDescription(), m.keywords);
+                    }
+                    if (InputHelper.justClickedLeft) {
+                        CardCrawlGame.sound.play("UI_CLICK_1");
+                        selectedMonster = m;
+                        selectedIndex = i;
+                    }
+                }
             }
 
             UpgradeButton btn = this.upgradeButtons.get(i);
             btn.update();
-            btn.current_x = m.drawX - 107.0F * Settings.scale;
-            btn.current_y = m.drawY - 64.0F * Settings.scale;
+            btn.current_x = targetX - 107.0F * Settings.scale;
+            btn.current_y = targetY - 64.0F * Settings.scale;
 
             SellButton sell = this.sellButtons.get(i);
             sell.update();
-            sell.current_x = m.drawX + 43.0F * Settings.scale;
-            sell.current_y = m.drawY - 64.0F * Settings.scale;
+            sell.current_x = targetX + 43.0F * Settings.scale;
+            sell.current_y = targetY - 64.0F * Settings.scale;
+        }
+
+        if (selectedMonster != null && InputHelper.justReleasedClickLeft) {
+            preWidth = -scrollX;
+            float mX = InputHelper.mX;
+            for (int i = 0; i < this.teamMonsters.size(); i++) {
+                AbstractTeamMonster m = this.teamMonsters.get(i);
+                preWidth += m.hb_w * 2.0F;
+                if (mX < preWidth) {
+                    Collections.swap(this.teamMonsters, i, selectedIndex);
+                }
+            }
+            selectedMonster = null;
         }
     }
 
@@ -275,6 +314,11 @@ public class OrganizationScreen implements ScrollBarListener {
     private void updateBarPosition() {
         float percent = MathHelper.percentFromValueBetween(this.scrollLowerBound, this.scrollUpperBound, this.scrollX);
         this.scrollBar.parentScrolledToPercent(percent);
+    }
+
+    @Override
+    public boolean isOpen() {
+        return isOpen;
     }
 
 }

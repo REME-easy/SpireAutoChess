@@ -67,13 +67,13 @@ public class TCultist extends AbstractTeamMonster {
 
     @Override
     public void upgrade(int level) {
-        super.upgrade(level);
         switch (level) {
             case 0:
             case 1:
                 this.changeMagicNumber(0, 2);
                 break;
         }
+        this.upgradedTimes++;
     }
 
     private void playSfx() {

@@ -22,6 +22,7 @@ import com.megacrit.cardcrawl.vfx.combat.BattleStartEffect;
 
 import SpireAutoChess.character.TeamMonsterGroup.MonsterSaveInfo;
 import SpireAutoChess.helper.GenericHelper;
+import SpireAutoChess.helper.MonsterManager;
 import SpireAutoChess.monsters.AbstractTeamMonster;
 import basemod.BaseMod;
 import basemod.abstracts.CustomSavable;
@@ -201,7 +202,13 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
 
     @Override
     public void onLoad(ArrayList<MonsterSaveInfo> monsters) {
-
+        for (MonsterSaveInfo info : monsters) {
+            AbstractTeamMonster m = MonsterManager.GetMonsterInstance(info.id);
+            for (int i = 0; i < info.upgradedTimes; i++) {
+                m.upgrade(i);
+            }
+            this.addMonster(m);
+        }
     }
 
     @Override

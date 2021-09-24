@@ -2,7 +2,8 @@
   "modid": "ChessPlayerMod",
   "name": "尖塔战棋[Spire Auto Chess]",
   "author_list": [
-    "REME"
+    "REME",
+    "Somdy"
   ],
   "description": "灵感来源炉石酒馆战棋和星际酒馆。玩得开心！",
   "version": "0.1.0",

@@ -111,8 +111,9 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
     }
 
     public void receiveEditCards() {
-        logger.info("===正在加载友方怪物===");
+        logger.info("===正在加载卡牌===");
         BaseMod.addDynamicVariable(new SecondaryMagicVariable());
+        new AutoAdd("ChessPlayerMod").setDefaultSeen(false).packageFilter("SpireAutoChess.cards.Enchanting").cards();
         logger.info("===加载完成===");
     }
 

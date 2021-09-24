@@ -24,9 +24,9 @@ import SpireAutoChess.helper.CustomTipRenderer;
 import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.helper.MonsterManager;
 import SpireAutoChess.monsters.AbstractTeamMonster;
-import SpireAutoChess.patches.OrganizationScreenPatch;
+import SpireAutoChess.patches.CustomScreenQueuePatch.ICustomScreen;
 
-public class MonsterShopScreen {
+public class MonsterShopScreen implements ICustomScreen {
     private static MonsterShopScreen _inst;
 
     public static MonsterShopScreen Inst() {
@@ -35,6 +35,7 @@ public class MonsterShopScreen {
         return _inst;
     }
 
+    public boolean isOpen = false;
     private float rugY;
     private float handTimer;
     private float handX;
@@ -114,7 +115,6 @@ public class MonsterShopScreen {
     }
 
     public void open() {
-        AbstractDungeon.screen = OrganizationScreenPatch.Enum.MONSTER_SHOP_SCREEN;
         CardCrawlGame.sound.play("SHOP_OPEN");
         AbstractDungeon.isScreenUp = true;
         AbstractDungeon.topPanel.unhoverHitboxes();
@@ -124,6 +124,8 @@ public class MonsterShopScreen {
         overlayMenu.hideCombatPanels();
         confirmButton.hideInstantly();
         confirmButton.show();
+        this.queueToFont();
+        this.isOpen = true;
         this.rugY = (float) Settings.HEIGHT;
         this.rugY = (float) Settings.HEIGHT;
         this.handX = (float) Settings.WIDTH / 2.0F;
@@ -141,14 +143,14 @@ public class MonsterShopScreen {
     }
 
     public void reopen() {
-        AbstractDungeon.screen = OrganizationScreenPatch.Enum.MONSTER_SHOP_SCREEN;
+        this.isOpen = true;
         AbstractDungeon.topPanel.unhoverHitboxes();
         AbstractDungeon.isScreenUp = true;
         GenericHelper.info("screen reopen");
     }
 
     public void close() {
-        AbstractDungeon.closeCurrentScreen();
+        this.isOpen = false;
         this.monsters.clear();
         this.purchaseButtons.clear();
         this.confirmButton.hide();
@@ -241,6 +243,13 @@ public class MonsterShopScreen {
 
     public void update() {
         this.confirmButton.update();
+        if (this.confirmButton.hb.clicked) {
+            this.confirmButton.hb.clicked = false;
+            this.confirmButton.hb.clickStarted = false;
+            this.confirmButton.isDisabled = true;
+            this.confirmButton.hide();
+            this.close();
+        }
         this.f_effect.update();
         this.updateHand();
         this.updateRug();
@@ -297,8 +306,13 @@ public class MonsterShopScreen {
             m.hb.update();
             if (m.hb.hovered) {
                 moveHand(m.drawX - m.hb_w, m.drawY + m.hb_h / 2.0F);
-                CustomTipRenderer.renderGenericTip(m.drawX + m.hb_w, m.drawY + m.hb_h / 2.0F, m.name,
-                        m.getDescription());
+                if (m.drawX < Settings.WIDTH * 0.75F) {
+                    CustomTipRenderer.renderGenericTip(m.drawX + m.hb_w, m.drawY + m.hb_h / 2.0F, m.name,
+                            m.getDescription(), m.keywords);
+                } else {
+                    CustomTipRenderer.renderGenericTip(m.drawX - m.hb_w - CustomTipRenderer.BOX_W,
+                            m.drawY + m.hb_h / 2.0F, m.name, m.getDescription(), m.keywords);
+                }
             }
             PurchaseButton btn = this.purchaseButtons.get(i);
             btn.update();
@@ -375,6 +389,7 @@ public class MonsterShopScreen {
         if (this.dialogTextEffect != null) {
             this.dialogTextEffect.render(sb);
         }
+        this.confirmButton.render(sb);
     }
 
     public void renderHand(SpriteBatch sb) {
@@ -387,6 +402,11 @@ public class MonsterShopScreen {
             m.render(sb);
             purchaseButtons.get(i).render(sb);
         }
+    }
+
+    @Override
+    public boolean isOpen() {
+        return isOpen;
     }
 
 }
