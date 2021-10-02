@@ -1,4 +1,9 @@
 {
+  "ChessPlayer_Generic": {
+    "TEXT": [
+      "怪物"
+    ]
+  },
   "ChessPlayer_OrganizationScreen": {
     "TEXT": [
       "当前队伍",
@@ -7,7 +12,9 @@
       "出售",
       "出售该怪物。",
       "返回",
-      "金币不足"
+      "金币不足",
+      "参战怪物",
+      "待战怪物"
     ]
   },
   "ChessPlayer_MonsterShopScreen": {

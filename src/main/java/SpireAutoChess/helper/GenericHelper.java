@@ -96,6 +96,27 @@ public class GenericHelper {
         AbstractDungeon.actionManager.addToBottom(action);
     }
 
+    public static void addToBotAbstract(VoidSupplier func) {
+        AbstractDungeon.actionManager.addToBottom(new AbstractGameAction() {
+            @Override
+            public void update() {
+                func.get();
+                isDone = true;
+            }
+        });
+    }
+
+    public static void applyPowerToSelf(AbstractCreature source, Function<AbstractCreature, AbstractPower> fac) {
+        AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(source, source, fac.apply(source)));
+    }
+
+    public static void applyPowerTo(AbstractCreature source, Function<AbstractCreature, AbstractPower> fac,
+            AbstractCreature... targets) {
+        for (AbstractCreature t : targets) {
+            AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(source, t, fac.apply(t)));
+        }
+    }
+
     public static void addEffect(AbstractGameEffect effect) {
         AbstractDungeon.effectList.add(effect);
     }
@@ -183,5 +204,9 @@ public class GenericHelper {
     // public static Pack MakePackAndRemoveCard(ArrayList<AbstractCard> cards) {
     //
     // }
+
+    public interface VoidSupplier {
+        void get();
+    }
 
 }

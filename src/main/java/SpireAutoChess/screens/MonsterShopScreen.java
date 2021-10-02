@@ -156,6 +156,7 @@ public class MonsterShopScreen implements ICustomScreen {
         this.confirmButton.hide();
         AbstractDungeon.isScreenUp = false;
         AbstractDungeon.dynamicBanner.hide();
+        overlayMenu.showCombatPanels();
     }
 
     public void addMonster(AbstractTeamMonster... monster) {
@@ -167,8 +168,10 @@ public class MonsterShopScreen implements ICustomScreen {
 
     public void purchaseMonster(AbstractTeamMonster monster) {
         if (this.monsters.contains(monster)) {
+            int index = this.monsters.indexOf(monster);
             this.monsters.remove(monster);
-            TeamMonsterGroup.Inst().addMonster(monster);
+            this.purchaseButtons.remove(index);
+            TeamMonsterGroup.GetWaitingMonsters().add(monster);
         }
     }
 

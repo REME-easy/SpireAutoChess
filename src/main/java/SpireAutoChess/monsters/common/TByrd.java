@@ -16,7 +16,7 @@ public class TByrd extends AbstractTeamMonster {
     public static final String NAME = STRINGS.NAME;
     public static final String[] MOVES = STRINGS.MOVES;
     public static final String[] DIALOG = STRINGS.DIALOG;
-    public static final int MAX_HP = 30;
+    public static final int MAX_HP = 15;
     public static final int DAMAGE_1 = 1;
     public static final int DAMAGE_AMT_1 = 4;
     public static final int DAMAGE_2 = 8;
@@ -28,6 +28,8 @@ public class TByrd extends AbstractTeamMonster {
     public TByrd() {
         super(NAME, ID, MAX_HP, 0.0F, 50.0F, 240.0F, 180.0F, (String) null, 0.0F, 0.0F);
         this.setDescriptionRange(2);
+        this.rarity = MonsterRarity.COMMON;
+        this.actNum = 1;
 
         this.addMoveInfo(new DamageInfo(this, DAMAGE_1), 0, DAMAGE_AMT_1);
         this.addMoveInfo(new DamageInfo(this, DAMAGE_2));

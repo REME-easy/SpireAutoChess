@@ -51,12 +51,14 @@ public class AbstractTeamMonster extends AbstractMonster {
     public final ArrayList<String> keywords = new ArrayList<>();
     public String description;
     public AbstractCard previewCard;
+    public int positionIndex = -1;
     public boolean isDirty = false;
     public boolean isMovingToTarget = false;
     protected float targetX;
     protected float targetY;
 
     public MonsterRarity rarity = MonsterRarity.COMMON;
+    public int actNum = -1;
     public int upgradedTimes = 0;
     public int maxUpgradeTimes = 1;
 
@@ -289,6 +291,7 @@ public class AbstractTeamMonster extends AbstractMonster {
     public void addMoveInfo(DamageInfo info, int block, int magic) {
         // this.damage.add(info);
         this.moveInfos.add(new MoveInfo(info, block, magic));
+        this.isDirty = true;
     }
 
     /**
@@ -308,7 +311,24 @@ public class AbstractTeamMonster extends AbstractMonster {
      */
     public void addMoveInfo(int block, int magic) {
         addMoveInfo(new DamageInfo(this, 0), block, magic);
-        this.isDirty = true;
+    }
+
+    /**
+     * 添加一条只包含格挡数的行动信息。
+     * 
+     * @param block
+     */
+    public void addMoveInfoOnlyBlock(int block) {
+        addMoveInfo(new DamageInfo(this, 0), 0, block);
+    }
+
+    /**
+     * 添加一条只包含特殊值的行动信息。
+     * 
+     * @param magic
+     */
+    public void addMoveInfoOnlyMagic(int magic) {
+        addMoveInfo(new DamageInfo(this, 0), 0, magic);
     }
 
     /**
@@ -382,6 +402,16 @@ public class AbstractTeamMonster extends AbstractMonster {
      */
     protected DamageInfo getDamageInfo(int index) {
         return this.moveInfos.get(index).info;
+    }
+
+    /**
+     * 获取该行动编号的行动信息。
+     * 
+     * @param index
+     * @return MoveInfo
+     */
+    protected MoveInfo getMoveInfo(int index) {
+        return this.moveInfos.get(index);
     }
 
     /**
@@ -630,6 +660,14 @@ public class AbstractTeamMonster extends AbstractMonster {
     }
 
     @Override
+    public void applyEndOfTurnTriggers() {
+        super.applyEndOfTurnTriggers();
+        this.powers.forEach((p) -> {
+            p.atEndOfTurnPreEndTurnCards(true);
+        });
+    }
+
+    @Override
     public void update() {
         super.update();
         this.updateMoving();
@@ -770,9 +808,9 @@ public class AbstractTeamMonster extends AbstractMonster {
     }
 
     public class MoveInfo {
-        private DamageInfo info;
-        private int block;
-        private int magic;
+        public DamageInfo info;
+        public int block;
+        public int magic;
 
         MoveInfo(DamageInfo info, int block, int magic) {
             this.info = info;

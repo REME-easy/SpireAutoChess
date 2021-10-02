@@ -17,22 +17,28 @@ public class TCultist extends AbstractTeamMonster {
     public static final String NAME = STRINGS.NAME;
     public static final String[] MOVES = STRINGS.MOVES;
     public static final String[] DIALOG = STRINGS.DIALOG;
-    public static final int MAX_HP = 60;
-    public static final int DAMAGE_1 = 6;
-    public static final int RITUAL_AMT = 3;
+    public static final int MAX_HP = 25;
+    public static final int DAMAGE_1 = 4;
+    public static final int RITUAL_AMT = 2;
 
     private boolean firstMove;
 
     public TCultist() {
         super(NAME, ID, MAX_HP, -8.0F, 10.0F, 230.0F, 240.0F, (String) null, 0.0F, 0.0F);
+        // 怪物的描述全部放在MOVES中，用setDesRange设置初始显示的范围（左闭右闭）。
         this.setDescriptionRange();
+
+        this.rarity = MonsterRarity.COMMON;
+        this.actNum = 1;
+
         this.dialogX = this.drawX;
         this.dialogY = this.drawY + 150.0F;
 
         this.firstMove = true;
 
-        this.addMoveInfo(0, RITUAL_AMT);
-        this.addMoveInfo(new DamageInfo(this, DAMAGE_1));
+        // 添加一条行动信息。之后getDamage,getBlock等获取该编号的行动信息。
+        this.addMoveInfoOnlyMagic(RITUAL_AMT);// 编号0
+        this.addMoveInfo(new DamageInfo(this, DAMAGE_1));// 编号1
 
         this.maxUpgradeTimes = 2;
 
@@ -54,7 +60,9 @@ public class TCultist extends AbstractTeamMonster {
             this.setNextMove((byte) 0, Intent.BUFF, 0, () -> {
                 playSfx();
                 // addToBot(new TalkAction(this, DIALOG[0]));
+                // 这里getMagicNumber(0) 对应获取上面编号0得magic为2。
                 ApplyPowerToSelf(new RitualPower(this, getMagicNumber(0), true));
+                // 是否保留意图，若为false则重roll意图。
                 return false;
             });
         } else {
@@ -71,6 +79,7 @@ public class TCultist extends AbstractTeamMonster {
             case 0:
             case 1:
                 this.changeMagicNumber(0, 2);
+                // 等同于 this.getMoveInfo(0).magic += 2;
                 break;
         }
         this.upgradedTimes++;

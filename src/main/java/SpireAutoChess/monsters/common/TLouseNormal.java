@@ -16,8 +16,8 @@ public class TLouseNormal extends AbstractTeamMonster {
     public static final String NAME = STRINGS.NAME;
     public static final String[] MOVES = STRINGS.MOVES;
     public static final String[] DIALOG = STRINGS.DIALOG;
-    public static final int MAX_HP = 20;
-    public static final int DAMAGE_1 = 6;
+    public static final int MAX_HP = 10;
+    public static final int DAMAGE_1 = 4;
     public static final int POWER_AMT = 2;
 
     private int moveIndex = 0;
@@ -26,8 +26,10 @@ public class TLouseNormal extends AbstractTeamMonster {
     public TLouseNormal() {
         super(NAME, ID, MAX_HP, 0.0F, -5.0F, 180.0F, 140.0F, (String) null, 0.0F, 0.0F);
         this.setDescriptionRange(1);
+        this.rarity = MonsterRarity.COMMON;
+        this.actNum = 1;
 
-        this.addMoveInfo(0, POWER_AMT);
+        this.addMoveInfoOnlyMagic(POWER_AMT);
         this.addMoveInfo(new DamageInfo(this, DAMAGE_1));
 
         this.loadAnimation("images/monsters/theBottom/louseRed/skeleton.atlas",

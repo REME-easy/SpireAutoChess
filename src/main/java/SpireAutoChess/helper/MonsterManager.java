@@ -10,6 +10,9 @@ import SpireAutoChess.monsters.AbstractTeamMonster;
 
 public class MonsterManager {
     public static final HashMap<String, AbstractTeamMonster> AllMonsters = new HashMap<>();
+    public static final ArrayList<AbstractTeamMonster> CommonMonsters = new ArrayList<>();
+    public static final ArrayList<AbstractTeamMonster> UncommonMonsters = new ArrayList<>();
+    public static final ArrayList<AbstractTeamMonster> RareMonsters = new ArrayList<>();
 
     public static void RegisterMonster(String id, AbstractTeamMonster monster) {
         AllMonsters.put(id, monster);

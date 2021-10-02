@@ -9,7 +9,7 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import basemod.abstracts.CustomCard;
 
 public abstract class AbstractChessCard extends CustomCard {
-    public CardStrings strings;
+    public final CardStrings strings;
 
     public int baseSecondaryMagicNum;
     public int SecondaryMagicNum;

@@ -5,17 +5,24 @@ import static SpireAutoChess.character.ChessPlayer.Enums.CHESS_PLAYER_CARD;
 import static com.megacrit.cardcrawl.core.Settings.language;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
+import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.google.gson.Gson;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.localization.CharacterStrings;
 import com.megacrit.cardcrawl.localization.Keyword;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
+import com.megacrit.cardcrawl.localization.PowerStrings;
+import com.megacrit.cardcrawl.localization.RelicStrings;
 import com.megacrit.cardcrawl.localization.UIStrings;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 
@@ -25,17 +32,21 @@ import org.apache.logging.log4j.Logger;
 import SpireAutoChess.character.ChessPlayer;
 import SpireAutoChess.character.TeamMonsterGroup;
 import SpireAutoChess.helper.EventHelper;
+import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.helper.MonsterManager;
 import SpireAutoChess.helper.SecondaryMagicVariable;
 import SpireAutoChess.monsters.AbstractTeamMonster;
 import SpireAutoChess.monsters.common.TCultist;
 import SpireAutoChess.monsters.common.TLouseDefensive;
 import SpireAutoChess.monsters.common.TLouseNormal;
+import SpireAutoChess.relics.MonsterOrganization;
+import SpireAutoChess.relics.MonsterShop;
 import SpireAutoChess.utils.OpenScreenCommand;
 import SpireAutoChess.utils.ShopScreenCommand;
 import basemod.AutoAdd;
 import basemod.BaseMod;
 import basemod.devcommands.ConsoleCommand;
+import basemod.helpers.RelicType;
 import basemod.interfaces.AddAudioSubscriber;
 import basemod.interfaces.EditCardsSubscriber;
 import basemod.interfaces.EditCharactersSubscriber;
@@ -91,18 +102,16 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
         } else if (language == Settings.GameLanguage.ZHS) {
             lang = "zh";
         }
-        // BaseMod.loadCustomStringsFile(RelicStrings.class,
-        // "ChessPlayerResources/localization/ChessPlayerRelics_" + lang + ".json");
-        // BaseMod.loadCustomStringsFile(CardStrings.class,
-        // "ChessPlayerResources/localization/ChessPlayerCards_" + lang + ".json");
-        // BaseMod.loadCustomStringsFile(PowerStrings.class,
-        // "ChessPlayerResources/localization/ChessPlayerPowers_" + lang + ".json");
+        BaseMod.loadCustomStringsFile(RelicStrings.class,
+                "ChessPlayerResources/localization/ChessPlayerRelics_" + lang + ".json");
+        BaseMod.loadCustomStringsFile(CardStrings.class,
+                "ChessPlayerResources/localization/ChessPlayerCards_" + lang + ".json");
+        BaseMod.loadCustomStringsFile(PowerStrings.class,
+                "ChessPlayerResources/localization/ChessPlayerPowers_" + lang + ".json");
         // BaseMod.loadCustomStringsFile(EventStrings.class,
         // "ChessPlayerResources/localization/ChessPlayerEvents_" + lang + ".json");
         BaseMod.loadCustomStringsFile(MonsterStrings.class,
                 "ChessPlayerResources/localization/ChessPlayerMonsters_" + lang + ".json");
-        // BaseMod.loadCustomStringsFile(OrbStrings.class,"ChessPlayerResources/localization/ChessPlayerOrbs_"
-        // + lang + ".json");
         BaseMod.loadCustomStringsFile(CharacterStrings.class,
                 "ChessPlayerResources/localization/ChessPlayerChar_" + lang + ".json");
         BaseMod.loadCustomStringsFile(UIStrings.class,
@@ -113,11 +122,13 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
     public void receiveEditCards() {
         logger.info("===正在加载卡牌===");
         BaseMod.addDynamicVariable(new SecondaryMagicVariable());
-        new AutoAdd("ChessPlayerMod").setDefaultSeen(false).packageFilter("SpireAutoChess.cards.Enchanting").cards();
+        new AutoAdd("ChessPlayerMod").setDefaultSeen(true).packageFilter("SpireAutoChess.cards.Enchanting").cards();
         logger.info("===加载完成===");
     }
 
     public void receiveEditRelics() {
+        BaseMod.addRelic(new MonsterOrganization(), RelicType.SHARED);
+        BaseMod.addRelic(new MonsterShop(), RelicType.SHARED);
     }
 
     public void receiveEditKeywords() {
@@ -190,7 +201,31 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
     @Override
     public void receiveStartGame() {
         // DEBUG
-        TeamMonsterGroup.Inst().addMonster(new TLouseDefensive(), new TLouseNormal(), new TCultist(), new TCultist(),
-                new TCultist());
+        // TeamMonsterGroup.Inst().addMonster(new TLouseDefensive(), new TLouseNormal(),
+        // new TCultist(), new TCultist(),
+        // new TCultist());
+        // TeamMonsterGroup.Inst().BattleMonsters.add(new TLouseDefensive());
+        // TeamMonsterGroup.Inst().BattleMonsters.add(new TCultist());
+        // TeamMonsterGroup.Inst().BattleMonsters.add(new TCultist());
+        // TeamMonsterGroup.Inst().WaitingMonsters.add(new TLouseDefensive());
+        // TeamMonsterGroup.Inst().WaitingMonsters.add(new TLouseNormal());
+    }
+
+    @SpirePatch(clz = AbstractDungeon.class, method = SpirePatch.CONSTRUCTOR, paramtypez = { String.class, String.class,
+            AbstractPlayer.class, ArrayList.class })
+    public static class GameStartPatch {
+        public static void Postfix(AbstractDungeon _inst, String name, String levelId, AbstractPlayer p,
+                ArrayList<String> newSpecialOneTimeEventList) {
+            if (AbstractDungeon.id.equals("Exordium") && AbstractDungeon.player.chosenClass == CHESS_PLAYER) {
+                GenericHelper.GainRelic(new MonsterOrganization());
+                GenericHelper.GainRelic(new MonsterShop());
+
+                TeamMonsterGroup.Inst().BattleMonsters.add(new TLouseDefensive());
+                TeamMonsterGroup.Inst().BattleMonsters.add(new TLouseNormal());
+
+                TeamMonsterGroup.Inst().WaitingMonsters.add(new TLouseDefensive());
+                TeamMonsterGroup.Inst().WaitingMonsters.add(new TCultist());
+            }
+        }
     }
 }

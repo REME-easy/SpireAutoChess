@@ -1,0 +1,8 @@
+{
+    "ChessPlayer_TExplosivePower": {
+        "NAME": "爆炸",
+        "DESCRIPTIONS": [
+            "当持有者死亡时，对最前方的敌人造成 #bM 点伤害。"
+        ]
+    }
+}

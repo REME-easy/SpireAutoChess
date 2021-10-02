@@ -11,10 +11,10 @@ import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.powers.AbstractPower;
 
-public abstract class AbstractCeobePower extends AbstractPower {
+public abstract class AbstractChessPower extends AbstractPower {
     public ArrayList<Integer> counters = new ArrayList<>();
 
-    public AbstractCeobePower(AbstractCreature owner, int amount, String id, String name) {
+    public AbstractChessPower(AbstractCreature owner, int amount, String id, String name) {
         this.ID = id;
         this.name = name;
         this.owner = owner;
@@ -42,7 +42,7 @@ public abstract class AbstractCeobePower extends AbstractPower {
         this.description = des;
     }
 
-    public AbstractCeobePower makeCopy() {
+    public AbstractChessPower makeCopy() {
         try {
             return this.getClass().getConstructor().newInstance();
         } catch (IllegalAccessException | InstantiationException | IllegalArgumentException | InvocationTargetException

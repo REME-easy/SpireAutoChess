@@ -10,8 +10,6 @@ import SpireAutoChess.monsters.AbstractTeamMonster;
 public class AbstractEnchantingCard extends AbstractChessCard
         implements TeamMonsterChangePositionSubscriber, TeamMonsterRemoveSubscriber {
 
-    public int MonsterIndex = -1;
-
     public AbstractEnchantingCard(String ID, boolean useTmpArt, CardStrings strings, int COST, CardType TYPE,
             CardRarity RARITY, CardTarget TARGET) {
         super(ID, useTmpArt, strings, COST, TYPE, RARITY, TARGET);
@@ -19,25 +17,27 @@ public class AbstractEnchantingCard extends AbstractChessCard
     }
 
     public AbstractTeamMonster GetEquippedMonster() {
-        return TeamMonsterGroup.Inst().GetMonsterByIndex(this.MonsterIndex);
+        return TeamMonsterGroup.Inst().GetMonsterByIndex(this.misc);
     }
 
     @Override
     public void applyPowers() {
         this.misc = this.SecondaryMagicNum;
+        this.rawDescription = strings.DESCRIPTION.replace("NAME", String.format(" *%s ", GetEquippedMonster().name));
+        this.initializeDescription();
         super.applyPowers();
     }
 
     @Override
     public void OnRemoveMonster(int position) {
-        if (this.MonsterIndex == position) {
+        if (this.misc == position) {
 
         }
     }
 
     @Override
     public void OnChangPosition(int source, int target) {
-        if (this.MonsterIndex == source || this.MonsterIndex == target) {
+        if (this.misc == source || this.misc == target) {
 
         }
     }

@@ -13,6 +13,7 @@ import com.megacrit.cardcrawl.helpers.TipHelper;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 
 import SpireAutoChess.monsters.AbstractTeamMonster;
+import SpireAutoChess.screens.OrganizationScreen.OrganizationNodeScreen;
 import SpireAutoChess.vfx.NotEnoughMoneyEffect;
 
 public class UpgradeButton {
@@ -28,15 +29,14 @@ public class UpgradeButton {
     public float current_x;
     public float current_y;
     public Hitbox hb;
-    private OrganizationScreen screen;
-    private int index;
+    private OrganizationNodeScreen screen;
     private int upgradePrice;
+    private AbstractTeamMonster monster;
 
-    public UpgradeButton(OrganizationScreen screen, int index) {
+    public UpgradeButton(OrganizationNodeScreen screen, AbstractTeamMonster monster) {
         this.screen = screen;
-        this.index = index;
-        AbstractTeamMonster m = screen.teamMonsters.get(index);
-        this.upgradePrice = m.getUpgradePrice(m.upgradedTimes + 1);
+        this.monster = monster;
+        this.upgradePrice = monster.getUpgradePrice(monster.upgradedTimes + 1);
         this.current_x = 0.0F;
         this.current_y = 0.0F;
         this.hb = new Hitbox(100.0F * Settings.scale, 100.0F * Settings.scale);
@@ -59,7 +59,7 @@ public class UpgradeButton {
             if (upgradePrice > AbstractDungeon.player.gold) {
                 AbstractDungeon.topLevelEffects.add(new NotEnoughMoneyEffect());
             } else {
-                this.screen.selectToUpgrade(index);
+                this.screen.selectToUpgrade(monster);
             }
         }
     }

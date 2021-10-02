@@ -2,7 +2,7 @@
     "ChessPlayer_TCultist": {
         "NAME": "邪教徒",
         "MOVES": [
-            "每场战斗首次行动给予自身 #bM 层 #y仪式 。",
+            " 教徒 。 NL 每场战斗首次行动为给予自身 #bM 层 #y仪式 。",
             "意图 #b1 ：造成 #bD 点 伤害。"
         ],
         "DIALOG": [
@@ -12,7 +12,7 @@
     "ChessPlayer_TLouseDefensive": {
         "NAME": "绿色虱虫",
         "MOVES": [
-            "意图 #b1 ：给予最前排友方 #bM 层 #y金属化 。",
+            "意图 #b1 ：给予最前排友方 #bM 层 #y多层护甲 。",
             "意图 #b2 ：造成 #bD 点 伤害。",
             "战斗开始时获得 #bM 层 #y蜷缩 。"
         ],
@@ -32,7 +32,7 @@
         "MOVES": [
             "意图 #b1 ：造成 #bD 点伤害 #bM 次。",
             "意图 #b2 ：造成 #bD 点伤害。",
-            "意图 #b3 ：给予自身 #bM 点 #y力量 。"
+            "意图 #b3 ：获得 #bM 点 #y力量 。"
         ],
         "DIALOG": []
     },
@@ -47,7 +47,7 @@
     "ChessPlayer_TLooter": {
         "NAME": "偷钱的",
         "MOVES": [
-            "攻击时，获得 #bM 点 #y金币 。",
+            " 市民 。 NL 攻击时，获得 #bM 点 #y金币 。",
             "意图 #b1 ：造成 #bD 点伤害。"
         ],
         "DIALOG": []
@@ -55,7 +55,7 @@
     "ChessPlayer_TBanditBear": {
         "NAME": "熊",
         "MOVES": [
-            "获得 #b金币 时，额外获得 #bM 点。",
+            " 市民 。 NL 获得 #b金币 时，额外获得 #bM 点。",
             "意图 #b1 ：造成 #bD 点伤害。",
             "意图 #b2 ：获得 #B 点 #y格挡 。"
         ],
@@ -64,7 +64,7 @@
     "ChessPlayer_TBanditChild": {
         "NAME": "尖尖",
         "MOVES": [
-            "战斗开始时，你每有 #bM 点 #y金币获得 #b1 点 #y力量 。",
+            " 市民 。 NL 战斗开始时，你每有 #bM 点 #y金币获得 #b1 点 #y力量 。",
             "意图 #b1 ：造成 #bD 点伤害 #bM 次。"
         ],
         "DIALOG": []
@@ -72,7 +72,7 @@
     "ChessPlayer_TBanditLeader": {
         "NAME": "罗密欧",
         "MOVES": [
-            "友方攻击时，获得 #bM 点 #y金币 。",
+            " 市民 。 NL 友方攻击时，获得 #bM 点 #y金币 。",
             "意图 #b1 ：造成 #bD 点伤害。",
             "意图 #b2 ：使所有敌人本回合失去 #bM 点 #y力量 。"
         ],
@@ -81,7 +81,7 @@
     "ChessPlayer_TChosen": {
         "NAME": "被拣选者",
         "MOVES": [
-            "战斗胜利时，向卡组添加一张战斗开始获得 #bM 点 #y力量 的 #y强化 到随机位置。",
+            " 教徒 。 NL 战斗胜利时，向随机友方添加战斗开始获得 #bM 点 #y力量 的 #y强化 。",
             "意图 #b1 ：造成 #bD 点伤害。",
             "意图 #b2 ：造成 #bD 点伤害，给予 #bM 层 #y虚弱 。"
         ],
@@ -90,7 +90,7 @@
     "ChessPlayer_TSpiker": {
         "NAME": "钉刺机",
         "MOVES": [
-            " #y机械 。TODO",
+            " 机械 。TODO",
             "意图 #b1 ：获得 #bM 点 #y荆棘 。"
         ],
         "DIALOG": []
@@ -98,7 +98,7 @@
     "ChessPlayer_TWrithingMass": {
         "NAME": "扭曲团块",
         "MOVES": [
-            " #y生态 。 NL 受到伤害时，卡组中添加一张 #y寄生体 ，并改变意图。",
+            " 生态 。 NL 受到伤害时，卡组中添加一张 #y寄生体 ，并改变意图。",
             "意图 #b1 ：造成 #bD 点伤害。",
             "意图 #b2 ：造成 #bD 点伤害。",
             "意图 #b3 ：造成 #bD 点伤害 #bM 次。",
@@ -109,9 +109,59 @@
     "ChessPlayer_TLagavulin": {
         "NAME": "乐加维林",
         "MOVES": [
-            " #y生态 。",
+            " 生态 。",
             "意图 #b1 ~ #b2 ：造成 #bD 点伤害。",
             "意图 #b3 ：使目标失去 #bM 点 #y力量 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TExploder": {
+        "NAME": "爆炸机",
+        "MOVES": [
+            " 机械 。 NL 阵亡时，对随机敌人造成 #bM 点伤害。",
+            "意图 #b1 ：造成 #bD 点伤害。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TCenturion": {
+        "NAME": "百夫长",
+        "MOVES": [
+            " 市民 。 NL 每当友方获得 格挡 ，对随机敌人造成 #bM 点伤害。",
+            "意图 #b1 ：造成 #bD 点伤害，获得 #bB 点 格挡 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_TFungiBeast": {
+        "NAME": "真菌兽",
+        "MOVES": [
+            " 生态 。 NL 阵亡时，给予随机敌人 #bM 层 易伤 。",
+            "意图 #b1 ：造成 #bD 点伤害。",
+            "意图 #b2 ：获得 #bM 点 #y力量 。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_THealer": {
+        "NAME": "神秘术士",
+        "MOVES": [
+            " 市民 。",
+            "意图 #b1 ：为最前排的友方回复 #bM 点生命。",
+            "意图 #b2 ：复活一个阵亡的随机友方。每场战斗最多释放该意图 #bM 次。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_Maw": {
+        "NAME": "巨口",
+        "MOVES": [
+            " 生态 。 NL 每当其他友方获得 #y力量 时，获得 #bM 点 #y力量 。不重复触发。",
+            "意图 #b1 ：造成 #bD 点伤害。"
+        ],
+        "DIALOG": []
+    },
+    "ChessPlayer_Snecko": {
+        "NAME": "异蛇",
+        "MOVES": [
+            " 生态 。 NL 当友方获得 强化 时，使另一个随机友方获得同样的 强化 。",
+            "意图 #b1 ：造成 #bD 点伤害。"
         ],
         "DIALOG": []
     }

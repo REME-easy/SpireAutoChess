@@ -75,6 +75,7 @@ public class MonsterUpgradeScreen {
             this.cancelButton.hb.clickStarted = false;
             this.confirmButton.hide();
             this.cancelButton.hide();
+            this.monster.upgrade(this.monster.upgradedTimes);
             this.close();
         }
     }

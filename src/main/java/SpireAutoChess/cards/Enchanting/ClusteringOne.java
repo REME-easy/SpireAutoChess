@@ -7,31 +7,30 @@ import com.megacrit.cardcrawl.rooms.AbstractRoom.RoomPhase;
 
 import SpireAutoChess.cards.AbstractEnchantingCard;
 import SpireAutoChess.helper.EventHelper.BattleStartSubscriber;
-import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.modcore.ChessPlayerModCore;
 
-public class HealthUpOne extends AbstractEnchantingCard implements BattleStartSubscriber {
-    private static final String ID = ChessPlayerModCore.MakePath(HealthUpOne.class.getSimpleName());
+public class ClusteringOne extends AbstractEnchantingCard implements BattleStartSubscriber {
+    private static final String ID = ChessPlayerModCore.MakePath(ClusteringOne.class.getSimpleName());
     private static CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 
-    public HealthUpOne() {
-        super(ID, true, cardStrings, -1, CardType.SKILL, CardRarity.COMMON, CardTarget.NONE);
-        this.setupMagicNumber(4);
+    public ClusteringOne() {
+        super(ID, true, cardStrings, -1, CardType.SKILL, CardRarity.BASIC, CardTarget.NONE);
+        this.setupSecondMagicNumber(20);
+        this.setupMagicNumber(2);
     }
 
     @Override
     public void OnBattleStart(AbstractRoom room) {
         if (room.phase == RoomPhase.COMBAT) {
-            GenericHelper.addToBotAbstract(() -> {
-                GetEquippedMonster().increaseMaxHp(this.magicNumber, true);
-            });
+            // TODO
         }
     }
 
     @Override
     public void limitedUpgrade() {
         super.limitedUpgrade();
-        this.upgradeMagicNumber(2);
+        this.upgradeMagicNumber(1);
+        this.upgradeSecondMagicNumber(5);
     }
 
 }

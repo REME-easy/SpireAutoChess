@@ -12,6 +12,7 @@ import com.megacrit.cardcrawl.helpers.TipHelper;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 
 import SpireAutoChess.monsters.AbstractTeamMonster;
+import SpireAutoChess.screens.OrganizationScreen.OrganizationNodeScreen;
 
 public class SellButton {
     private static final Color HOVER_BLEND_COLOR = new Color(1.0F, 1.0F, 1.0F, 0.4F);
@@ -26,15 +27,14 @@ public class SellButton {
     public float current_x;
     public float current_y;
     public Hitbox hb;
-    private OrganizationScreen screen;
-    private int index;
+    private OrganizationNodeScreen screen;
     private int sellPrice;
+    private AbstractTeamMonster monster;
 
-    public SellButton(OrganizationScreen screen, int index) {
+    public SellButton(OrganizationNodeScreen screen, AbstractTeamMonster monster) {
         this.screen = screen;
-        this.index = index;
-        AbstractTeamMonster m = screen.teamMonsters.get(index);
-        this.sellPrice = m.getSellPrice();
+        this.monster = monster;
+        this.sellPrice = monster.getSellPrice();
         this.current_x = 0.0F;
         this.current_y = 0.0F;
         this.hb = new Hitbox(100.0F * Settings.scale, 100.0F * Settings.scale);
@@ -54,7 +54,7 @@ public class SellButton {
 
         if (this.hb.clicked) {
             this.hb.clicked = false;
-            this.screen.selectToSell(index);
+            this.screen.selectToSell(monster);
         }
     }
 

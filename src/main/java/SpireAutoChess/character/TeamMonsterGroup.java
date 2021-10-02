@@ -29,12 +29,20 @@ import basemod.abstracts.CustomSavable;
 import basemod.interfaces.ISubscriber;
 import javassist.CtBehavior;
 
-public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<MonsterSaveInfo>> {
+public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<ArrayList<MonsterSaveInfo>>> {
     public final ArrayList<AbstractTeamMonster> Monsters = new ArrayList<>();
+    public final ArrayList<AbstractTeamMonster> BattleMonsters = new ArrayList<>();
+    public final ArrayList<AbstractTeamMonster> WaitingMonsters = new ArrayList<>();
+
     private AbstractTeamMonster hoveredMonster;
 
     public static int maxSize = 5;
 
+    /**
+     * 获取怪物团队的单例。
+     * 
+     * @return TeamMonsterGroup
+     */
     public static TeamMonsterGroup Inst() {
         return MonstersFields.Monsters.get(AbstractDungeon.player);
     }
@@ -50,16 +58,49 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
         this(new ArrayList<>());
     }
 
+    /**
+     * 向战斗中怪物团队添加怪物。
+     * 
+     * @param o
+     */
     public void addMonster(AbstractTeamMonster... o) {
         for (AbstractTeamMonster m : o) {
             this.Monsters.add(m);
         }
     }
 
+    /**
+     * 获取所有参战（战斗中）怪物。
+     * 
+     * @return ArrayList<AbstractTeamMonster>
+     */
     public static ArrayList<AbstractTeamMonster> GetMonsters() {
         return MonstersFields.Monsters.get(AbstractDungeon.player).Monsters;
     }
 
+    /**
+     * 获取所有参战（战斗外）怪物。
+     * 
+     * @return ArrayList<AbstractTeamMonster>
+     */
+    public static ArrayList<AbstractTeamMonster> GetBattleMonsters() {
+        return MonstersFields.Monsters.get(AbstractDungeon.player).BattleMonsters;
+    }
+
+    /**
+     * 获取所有待战怪物。
+     * 
+     * @return ArrayList<AbstractTeamMonster>
+     */
+    public static ArrayList<AbstractTeamMonster> GetWaitingMonsters() {
+        return MonstersFields.Monsters.get(AbstractDungeon.player).WaitingMonsters;
+    }
+
+    /**
+     * 向战斗中所有友方怪物执行动作。
+     * 
+     * @param func
+     */
     public static void ApplyFuncToEachMonster(Function<AbstractTeamMonster, Boolean> func) {
         for (AbstractTeamMonster m : GetMonsters()) {
             if (func.apply(m))
@@ -69,11 +110,16 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
 
     private void usePreBattleAction() {
         if (!AbstractDungeon.loading_post_combat) {
+            GenericHelper.info("use pre battle action");
+            Monsters.clear();
+            BattleMonsters.forEach((m) -> {
+                AbstractTeamMonster tmp = MonsterManager.GetMonsterInstance(m.id);
+                Monsters.add(tmp);
+                tmp.init();
+                tmp.usePreBattleAction();
+            });
             for (int i = 0; i < Monsters.size(); i++) {
-                AbstractTeamMonster m = Monsters.get(i);
-                m.usePreBattleAction();
-                // GenericHelper.addToBot(new RollMoveAction(m));
-                GenericHelper.MoveMonster(m, (i - 1) * 200.0F * Settings.scale, AbstractDungeon.floorY);
+                GenericHelper.MoveMonster(Monsters.get(i), (i - 1) * 200.0F * Settings.scale, AbstractDungeon.floorY);
             }
         }
     }
@@ -81,9 +127,6 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
     private void atEndOfTurn() {
         for (AbstractTeamMonster m : this.Monsters) {
             m.applyEndOfTurnTriggers();
-            // for (AbstractPower p : m.powers) {
-            // p.atEndOfRound();
-            // }
         }
         queueMonsters();
     }
@@ -98,6 +141,12 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
         }
     }
 
+    /**
+     * 使用序号获取战斗中怪物。从左向右。
+     * 
+     * @param index
+     * @return AbstractTeamMonster
+     */
     public AbstractTeamMonster GetMonsterByIndex(int index) {
         if (index < 0) {
             return this.Monsters.get(this.Monsters.size() + index);
@@ -105,6 +154,12 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
         return this.Monsters.get(index);
     }
 
+    /**
+     * 使用ID获取战斗中怪物。只获取从左向右第一个。
+     * 
+     * @param id
+     * @return AbstractTeamMonster
+     */
     public AbstractTeamMonster GetMonsterByID(String id) {
         for (AbstractTeamMonster m : Monsters) {
             if (id.equals(m.id)) {
@@ -124,6 +179,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
 
     public void showIntent() {
         for (AbstractTeamMonster m : this.Monsters) {
+            GenericHelper.info("try to show intent of:" + m.name);
             m.createIntent();
         }
         GenericHelper.info("intent showed");
@@ -201,22 +257,38 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Mo
     }
 
     @Override
-    public void onLoad(ArrayList<MonsterSaveInfo> monsters) {
-        for (MonsterSaveInfo info : monsters) {
-            AbstractTeamMonster m = MonsterManager.GetMonsterInstance(info.id);
-            for (int i = 0; i < info.upgradedTimes; i++) {
-                m.upgrade(i);
-            }
-            this.addMonster(m);
+    public void onLoad(ArrayList<ArrayList<MonsterSaveInfo>> monsters) {
+        if (monsters.size() == 2) {
+            monsters.get(0).forEach((info) -> {
+                AbstractTeamMonster m = MonsterManager.GetMonsterInstance(info.id);
+                for (int i = 0; i < info.upgradedTimes; i++) {
+                    m.upgrade(i);
+                }
+                BattleMonsters.add(m);
+            });
+            monsters.get(1).forEach((info) -> {
+                AbstractTeamMonster m = MonsterManager.GetMonsterInstance(info.id);
+                for (int i = 0; i < info.upgradedTimes; i++) {
+                    m.upgrade(i);
+                }
+                WaitingMonsters.add(m);
+            });
         }
     }
 
     @Override
-    public ArrayList<MonsterSaveInfo> onSave() {
-        ArrayList<MonsterSaveInfo> monsters = new ArrayList<>();
-        for (AbstractTeamMonster m : this.Monsters) {
-            monsters.add(new MonsterSaveInfo(m.id, m.upgradedTimes));
-        }
+    public ArrayList<ArrayList<MonsterSaveInfo>> onSave() {
+        ArrayList<ArrayList<MonsterSaveInfo>> monsters = new ArrayList<>();
+        ArrayList<MonsterSaveInfo> battle = new ArrayList<>();
+        BattleMonsters.forEach((m) -> {
+            battle.add(new MonsterSaveInfo(m.id, m.upgradedTimes));
+        });
+        monsters.add(battle);
+        ArrayList<MonsterSaveInfo> waiting = new ArrayList<>();
+        WaitingMonsters.forEach((m) -> {
+            waiting.add(new MonsterSaveInfo(m.id, m.upgradedTimes));
+        });
+        monsters.add(waiting);
         return monsters;
     }
 

@@ -1,0 +1,16 @@
+{
+  "ChessPlayer_MonsterShop": {
+    "NAME": "怪物商店",
+    "FLAVOR": "使用后会有随叫随到的商人与你交易。但与你经常看到的那个好像不同？",
+    "DESCRIPTIONS": [
+      " #y右键单击 ：打开怪物商店界面。"
+    ]
+  },
+  "ChessPlayer_MonsterOrganization": {
+    "NAME": "队伍管理",
+    "FLAVOR": "确保一场好的游戏。",
+    "DESCRIPTIONS": [
+      " #y右键单击 ：打开怪物队伍管理界面。"
+    ]
+  }
+}
