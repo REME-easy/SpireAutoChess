@@ -13,13 +13,13 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.MathHelper;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
-import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.screens.mainMenu.HorizontalScrollBar;
 import com.megacrit.cardcrawl.screens.mainMenu.ScrollBarListener;
 import com.megacrit.cardcrawl.ui.buttons.ConfirmButton;
 
 import SpireAutoChess.character.TeamMonsterGroup;
 import SpireAutoChess.helper.CustomTipRenderer;
+import SpireAutoChess.helper.EventHelper;
 import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.helper.MonsterManager;
 import SpireAutoChess.monsters.AbstractTeamMonster;
@@ -73,38 +73,26 @@ public class OrganizationScreen implements ScrollBarListener, ICustomScreen {
         this.upgradeScreen = new MonsterUpgradeScreen();
     }
 
-    public void open(AbstractTeamMonster... m) {
-        currentWidth = 0.0F;
-        this.isOpen = true;
-        this.addMonsters(m);
-        for (AbstractMonster monster : m) {
-            monster.showHealthBar();
+    public void open() {
+        for (int i = 0; i < TeamMonsterGroup.GetBattleMonsters().size(); i++) {
+            AbstractTeamMonster m = MonsterManager.GetMonsterInstance(TeamMonsterGroup.GetBattleMonsters().get(i).id);
+            m.showHealthBar();
+            m.positionIndex = i;
+            this.addMonsters(m);
         }
-        AbstractDungeon.topPanel.unhoverHitboxes();
-        AbstractDungeon.isScreenUp = true;
-        confirmButton.isDisabled = false;
-        overlayMenu.proceedButton.hide();
-        overlayMenu.cancelButton.hide();
-        overlayMenu.hideCombatPanels();
-        confirmButton.hideInstantly();
-        confirmButton.show();
-    }
-
-    public void open(TeamMonsterGroup group) {
+        for (int i = 0; i < TeamMonsterGroup.GetWaitingMonsters().size(); i++) {
+            AbstractTeamMonster m = MonsterManager.GetMonsterInstance(TeamMonsterGroup.GetWaitingMonsters().get(i).id);
+            m.showHealthBar();
+            this.addMonsters(m);
+        }
         currentWidth = 0.0F;
         this.isOpen = true;
         this.queueToFont();
-        for (AbstractTeamMonster m : group.Monsters) {
-            AbstractTeamMonster inst = MonsterManager.GetMonsterInstance(m.id);
-            this.addMonsters(inst);
-            inst.showHealthBar();
-        }
         AbstractDungeon.topPanel.unhoverHitboxes();
         AbstractDungeon.isScreenUp = true;
         confirmButton.isDisabled = false;
         overlayMenu.proceedButton.hide();
         overlayMenu.cancelButton.hide();
-        AbstractDungeon.dynamicBanner.appear(TEXT[0]);
         overlayMenu.hideCombatPanels();
         confirmButton.hideInstantly();
         confirmButton.show();
@@ -116,7 +104,6 @@ public class OrganizationScreen implements ScrollBarListener, ICustomScreen {
         AbstractDungeon.isScreenUp = true;
         AbstractDungeon.overlayMenu.proceedButton.hide();
         AbstractDungeon.overlayMenu.endTurnButton.disable();
-        AbstractDungeon.dynamicBanner.appear(TEXT[0]);
         GenericHelper.info("screen reopen");
     }
 
@@ -146,6 +133,11 @@ public class OrganizationScreen implements ScrollBarListener, ICustomScreen {
     }
 
     public void selectToSell(int index) {
+        AbstractDungeon.player.gainGold(teamMonsters.get(index).getSellPrice());
+        teamMonsters.remove(index);
+        EventHelper.TeamMonsterRemoveSubscribers.forEach((m) -> {
+            m.OnRemoveMonster(index);
+        });
     }
 
     public void update() {
@@ -291,6 +283,9 @@ public class OrganizationScreen implements ScrollBarListener, ICustomScreen {
             AbstractTeamMonster m = this.teamMonsters.get(i);
             m.render(sb);
             m.renderHealth(sb);
+            if (m.positionIndex >= 0) {
+                m.renderReticle(sb);
+            }
         }
     }
 
