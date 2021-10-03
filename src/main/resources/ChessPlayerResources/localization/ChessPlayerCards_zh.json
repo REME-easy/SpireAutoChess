@@ -1,34 +1,38 @@
 {
   "ChessPlayer_HealthUpOne": {
     "NAME": "前锋生命强化Ⅰ",
-    "DESCRIPTION": " chessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 !M! 点生命上限。"
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 !M! 点生命上限。"
   },
   "ChessPlayer_AttackUpOne": {
     "NAME": "前锋攻击强化Ⅰ",
-    "DESCRIPTION": " chessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 !M! 点 力量 。"
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 !M! 点 力量 。"
   },
   "ChessPlayer_Barricade": {
     "NAME": "前锋壁垒强化",
-    "DESCRIPTION": " chessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 *壁垒 。"
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 *壁垒 。"
   },
   "ChessPlayer_PlaceHolderOne": {
     "NAME": "占位卡Ⅰ",
-    "DESCRIPTION": " chessPlayer:强化 。"
+    "DESCRIPTION": " ChessPlayer:强化 。"
   },
   "ChessPlayer_TempShieldOne": {
     "NAME": "前锋临时护盾Ⅰ",
-    "DESCRIPTION": " chessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 !M! 点 格挡 。"
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时， 最前方的友方怪物获得 !M! 点 格挡 。"
   },
   "ChessPlayer_ClusteringOne": {
     "NAME": "群聚Ⅰ",
-    "DESCRIPTION": " chessPlayer:强化 。 NL 所有生命低于 !CPM! 的友方怪物获得 !M! 点 力量 。"
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 所有生命低于 !CPM! 的友方怪物获得 !M! 点 力量 。"
   },
   "ChessPlayer_LivabilityOne": {
     "NAME": "宜居Ⅰ",
-    "DESCRIPTION": " chessPlayer:强化 。 NL 所有 chessPlayer:生态 怪物获得 !M! 点 力量 。"
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 所有 ChessPlayer:生态 怪物获得 !M! 点 力量 。"
   },
   "ChessPlayer_SpeedOne": {
     "NAME": "速度强化Ⅰ",
-    "DESCRIPTION": " chessPlayer:强化 。 NL 战斗开始时，最前方的友方怪物行动一次。"
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时，最前方的友方怪物行动一次。"
+  },
+  "ChessPlayer_Hex": {
+    "NAME": "邪咒",
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时， !CPM! 号位置的友方怪物获得 !M! 点 力量 。"
   }
 }

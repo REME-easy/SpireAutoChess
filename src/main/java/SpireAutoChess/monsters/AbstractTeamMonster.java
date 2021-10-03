@@ -16,6 +16,7 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireSuper;
 import com.megacrit.cardcrawl.actions.AbstractGameAction.AttackEffect;
 import com.megacrit.cardcrawl.actions.animations.AnimateFastAttackAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
+import com.megacrit.cardcrawl.actions.common.GainBlockAction;
 import com.megacrit.cardcrawl.actions.common.RollMoveAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -96,8 +97,10 @@ public class AbstractTeamMonster extends AbstractMonster {
      * @param info
      * @param type
      * @param effect
+     * @param shake  是否展示向前攻击动画
+     * @param times  攻击次数
      */
-    protected void DamageFront(DamageInfo info, DamageType type, AttackEffect effect) {
+    protected void DamageFront(DamageInfo info, DamageType type, AttackEffect effect, boolean shake, int times) {
         info.type = type;
         addToBot(new AnimateFastAttackAction(this));
         addToBot(new DamageFrontAction(info, effect));
@@ -110,7 +113,7 @@ public class AbstractTeamMonster extends AbstractMonster {
      * @param type
      */
     protected void DamageFront(DamageInfo info, DamageType type) {
-        DamageFront(info, type, AttackEffect.SLASH_DIAGONAL);
+        DamageFront(info, type, AttackEffect.SLASH_DIAGONAL, true, 1);
     }
 
     /**
@@ -119,7 +122,15 @@ public class AbstractTeamMonster extends AbstractMonster {
      * @param info
      */
     protected void DamageFront(DamageInfo info) {
-        DamageFront(info, DamageType.NORMAL, AttackEffect.SLASH_DIAGONAL);
+        DamageFront(info, DamageType.NORMAL, AttackEffect.SLASH_DIAGONAL, true, 1);
+    }
+
+    /**
+     * @param info
+     * @param times 攻击次数
+     */
+    protected void DamageFront(DamageInfo info, int times) {
+        DamageFront(info, DamageType.NORMAL, AttackEffect.SLASH_DIAGONAL, true, times);
     }
 
     /**
@@ -132,6 +143,28 @@ public class AbstractTeamMonster extends AbstractMonster {
     }
 
     /**
+     * 该怪物给予自己格挡。
+     * 
+     * @param amt
+     */
+    protected void AddBlockToSelf(int amt) {
+        addToBot(new GainBlockAction(this, this, amt));
+    }
+
+    /**
+     * 该怪物给予其他友方格挡。
+     * 
+     * @param amt
+     * @param indices 位置。可以为负数，负数从右往左算起。
+     */
+    protected void AddBlockToOther(int amt, int... indices) {
+        for (int index : indices) {
+            AbstractMonster m = TeamMonsterGroup.Inst().GetMonsterByIndex(index);
+            addToBot(new GainBlockAction(m, this, amt));
+        }
+    }
+
+    /**
      * 该怪物给予其他友方能力。
      * 
      * @param fac     返回一个能力的函数接口。
@@ -140,6 +173,18 @@ public class AbstractTeamMonster extends AbstractMonster {
     protected void ApplyPowerToOther(Function<AbstractMonster, AbstractPower> fac, int... indices) {
         for (int index : indices) {
             AbstractMonster m = TeamMonsterGroup.Inst().GetMonsterByIndex(index);
+            addToBot(new ApplyPowerAction(m, this, fac.apply(m)));
+        }
+    }
+
+    /**
+     * 该怪物给予其他怪物能力，能给予敌方。
+     * 
+     * @param fac      返回一个能力的函数接口。
+     * @param monsters
+     */
+    protected void ApplyPowerToOther(Function<AbstractMonster, AbstractPower> fac, AbstractMonster... monsters) {
+        for (AbstractMonster m : monsters) {
             addToBot(new ApplyPowerAction(m, this, fac.apply(m)));
         }
     }

@@ -1,6 +1,7 @@
 package SpireAutoChess.helper;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,12 @@ public class GenericHelper {
     private static final Logger logger = LogManager.getLogger(GenericHelper.class);
 
     public GenericHelper() {
+    }
+
+    public static void loop(int times, Consumer<Integer> consumer) {
+        for (int i = 0; i < times; i++) {
+            consumer.accept(i);
+        }
     }
 
     public static AbstractMonster getRandomMonsterSafe() {

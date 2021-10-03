@@ -60,6 +60,7 @@ public class PurchaseButton {
                 AbstractDungeon.topLevelEffects.add(new NotEnoughMoneyEffect());
                 this.screen.CantBuySpeech();
             } else {
+                AbstractDungeon.player.loseGold(purchasePrice);
                 this.screen.purchaseMonster(monster);
                 this.screen.BuySpeech();
 

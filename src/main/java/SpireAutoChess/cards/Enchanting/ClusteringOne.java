@@ -15,7 +15,7 @@ public class ClusteringOne extends AbstractEnchantingCard implements TeamMonster
     private static CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 
     public ClusteringOne() {
-        super(ID, true, cardStrings, CardType.SKILL, CardRarity.COMMON, CardTarget.NONE);
+        super(ID, true, cardStrings, CardType.SKILL, CardRarity.UNCOMMON, CardTarget.NONE);
         this.setupMagicNumber(1);
         this.setupSecondMagicNumber(20);
     }

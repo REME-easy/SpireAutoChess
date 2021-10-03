@@ -275,7 +275,7 @@ public class OrganizationScreen implements ICustomScreen {
             float targetY;
             for (int i = 0; i < this.teamMonsters.size(); i++) {
                 m = this.teamMonsters.get(i);
-                targetX = preWidth - scrollX;
+                targetX = this.shouldShowScrollBar ? preWidth - scrollX : preWidth - scrollX + 300.0F * Settings.scale;
                 targetY = screenY;
                 if (m != ParentScreen.selectedMonster) {
                     if (!m.isMovingToTarget)
@@ -307,12 +307,12 @@ public class OrganizationScreen implements ICustomScreen {
                 UpgradeButton btn = this.upgradeButtons.get(i);
                 btn.update();
                 btn.current_x = targetX + m.hb_w / 2.0F + 64.0F * Settings.scale;
-                btn.current_y = targetY + Settings.HEIGHT / 5.5F + 64.0F * Settings.scale;
+                btn.current_y = targetY + Settings.HEIGHT / 6.0F + 64.0F * Settings.scale;
 
                 SellButton sell = this.sellButtons.get(i);
                 sell.update();
                 sell.current_x = targetX + m.hb_w / 2.0F + 64.0F * Settings.scale;
-                sell.current_y = targetY + Settings.HEIGHT / 5.5F - 64.0F * Settings.scale;
+                sell.current_y = targetY + Settings.HEIGHT / 6.0F - 64.0F * Settings.scale;
             }
 
             // if (ParentScreen.selectedMonster != null &&
@@ -365,7 +365,8 @@ public class OrganizationScreen implements ICustomScreen {
         }
 
         private void checkIfShowScrollBar() {
-            if (!(this.shouldShowScrollBar = this.currentWidth > Settings.WIDTH * 1.5F)) {
+            GenericHelper.info(String.format("%f,%d", this.currentWidth, Settings.WIDTH));
+            if (this.shouldShowScrollBar = this.currentWidth + 500.0F * Settings.scale > Settings.WIDTH) {
                 this.scrollLowerBound = -500.0F;
                 this.scrollUpperBound = Math.abs(Settings.WIDTH - this.currentWidth) + 300.0F;
                 // this.shouldShowScrollBar = true;

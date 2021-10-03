@@ -10,5 +10,11 @@
         "DESCRIPTIONS": [
             "攻击时，获得 #bM 点 #y金币 。"
         ]
+    },
+    "ChessPlayer_THexPower": {
+        "NAME": "邪咒",
+        "DESCRIPTIONS": [
+            "战斗胜利时，获得随机位置的 #y邪咒强化 。"
+        ]
     }
 }
