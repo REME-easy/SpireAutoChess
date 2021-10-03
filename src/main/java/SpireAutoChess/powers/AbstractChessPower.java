@@ -20,9 +20,9 @@ public abstract class AbstractChessPower extends AbstractPower {
         this.owner = owner;
         this.amount = amount;
         this.type = BUFF;
-        String sid = id.replace("Ceobe_", "");
-        Texture img84 = ImageMaster.loadImage(String.format("CeobeResources/img/powers/%s84.png", sid));
-        Texture img32 = ImageMaster.loadImage(String.format("CeobeResources/img/powers/%s32.png", sid));
+        String sid = id.replace("ChessPlayer_", "");
+        Texture img84 = ImageMaster.loadImage(String.format("ChessPlayerResources/img/powers/%s84.png", sid));
+        Texture img32 = ImageMaster.loadImage(String.format("ChessPlayerResources/img/powers/%s32.png", sid));
         if (img84 != null || img32 != null) {
             this.region128 = new AtlasRegion(img84, 0, 0, 84, 84);
             this.region48 = new AtlasRegion(img32, 0, 0, 32, 32);

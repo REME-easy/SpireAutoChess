@@ -49,14 +49,16 @@ public class OrganizationScreen implements ICustomScreen {
         this.confirmButton = new ConfirmButton();
         this.upgradeScreen = new MonsterUpgradeScreen();
         this.nodeScreens = new ArrayList<>();
-        this.nodeScreens.add(new OrganizationNodeScreen(this, 0));
-        this.nodeScreens.add(new OrganizationNodeScreen(this, 1));
-        this.nodeScreens.get(0).addMonsters(TeamMonsterGroup.GetBattleMonsters());
-        this.nodeScreens.get(1).addMonsters(TeamMonsterGroup.GetWaitingMonsters());
+
     }
 
     public void open() {
         this.isOpen = true;
+        this.nodeScreens.clear();
+        this.nodeScreens.add(new OrganizationNodeScreen(this, 0));
+        this.nodeScreens.add(new OrganizationNodeScreen(this, 1));
+        this.nodeScreens.get(0).addMonsters(TeamMonsterGroup.GetWaitingMonsters());
+        this.nodeScreens.get(1).addMonsters(TeamMonsterGroup.GetBattleMonsters());
         this.queueToFont();
         AbstractDungeon.topPanel.unhoverHitboxes();
         AbstractDungeon.isScreenUp = true;
@@ -95,6 +97,13 @@ public class OrganizationScreen implements ICustomScreen {
                 if (this.hoveredScreenIndex != this.selectedScreenIndex) {
                     nodeScreens.get(this.hoveredScreenIndex).addMonsters(this.selectedMonster);
                     nodeScreens.get(this.selectedScreenIndex).removeMonsters(this.selectedMonster);
+                    if (selectedScreenIndex == 0) {
+                        TeamMonsterGroup.GetBattleMonsters().add(this.selectedMonster);
+                        TeamMonsterGroup.GetWaitingMonsters().remove(this.selectedMonster);
+                    } else {
+                        TeamMonsterGroup.GetWaitingMonsters().add(this.selectedMonster);
+                        TeamMonsterGroup.GetBattleMonsters().remove(this.selectedMonster);
+                    }
                 }
                 this.selectedMonster = null;
                 this.selectedIndex = -1;
@@ -164,9 +173,9 @@ public class OrganizationScreen implements ICustomScreen {
             this.sellButtons = new ArrayList<>();
             this.ParentScreen = parent;
             this.index = index;
-            this.screenY = AbstractDungeon.floorY / 2.0F + index * Settings.HEIGHT / 2.0F;
+            this.screenY = AbstractDungeon.floorY / 2.5F + index * Settings.HEIGHT / 2.0F;
             this.scrollBar = new HorizontalScrollBar(this, (float) Settings.WIDTH / 2.0F,
-                    50.0F * Settings.scale + HorizontalScrollBar.TRACK_H / 2.0F + index * Settings.HEIGHT / 2.0F,
+                    HorizontalScrollBar.TRACK_H / 2.0F + index * Settings.HEIGHT / 2.0F,
                     (float) Settings.WIDTH - 256.0F * Settings.scale);
             this.hb = new Hitbox(0.0F, index * Settings.HEIGHT / 2.0F, Settings.WIDTH, Settings.HEIGHT / 2.0F);
         }
@@ -227,7 +236,8 @@ public class OrganizationScreen implements ICustomScreen {
             if (!ParentScreen.upgradeScreen.isOpen) {
 
                 // this.updateControllerInput();
-                if (!this.scrollBar.update() && this.hb.hovered && ParentScreen.selectedMonster == null) {
+                if (this.shouldShowScrollBar && !this.scrollBar.update() && this.hb.hovered
+                        && ParentScreen.selectedMonster == null) {
                     this.updateScrolling();
                 }
                 updateMonsters();
@@ -259,12 +269,11 @@ public class OrganizationScreen implements ICustomScreen {
         }
 
         public void updateMonsters() {
-            int teamSize = this.teamMonsters.size();
             float preWidth = 0;
             AbstractTeamMonster m;
             float targetX;
             float targetY;
-            for (int i = 0; i < teamSize; i++) {
+            for (int i = 0; i < this.teamMonsters.size(); i++) {
                 m = this.teamMonsters.get(i);
                 targetX = preWidth - scrollX;
                 targetY = screenY;
@@ -298,12 +307,12 @@ public class OrganizationScreen implements ICustomScreen {
                 UpgradeButton btn = this.upgradeButtons.get(i);
                 btn.update();
                 btn.current_x = targetX + m.hb_w / 2.0F + 64.0F * Settings.scale;
-                btn.current_y = targetY + Settings.HEIGHT / 5.0F + 64.0F * Settings.scale;
+                btn.current_y = targetY + Settings.HEIGHT / 5.5F + 64.0F * Settings.scale;
 
                 SellButton sell = this.sellButtons.get(i);
                 sell.update();
                 sell.current_x = targetX + m.hb_w / 2.0F + 64.0F * Settings.scale;
-                sell.current_y = targetY + Settings.HEIGHT / 5.0F - 64.0F * Settings.scale;
+                sell.current_y = targetY + Settings.HEIGHT / 5.5F - 64.0F * Settings.scale;
             }
 
             // if (ParentScreen.selectedMonster != null &&
@@ -359,7 +368,7 @@ public class OrganizationScreen implements ICustomScreen {
             if (!(this.shouldShowScrollBar = this.currentWidth > Settings.WIDTH * 1.5F)) {
                 this.scrollLowerBound = -500.0F;
                 this.scrollUpperBound = Math.abs(Settings.WIDTH - this.currentWidth) + 300.0F;
-                this.shouldShowScrollBar = true;
+                // this.shouldShowScrollBar = true;
                 this.resetScrolling();
             }
         }

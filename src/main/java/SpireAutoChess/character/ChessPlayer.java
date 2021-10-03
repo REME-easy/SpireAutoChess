@@ -69,11 +69,9 @@ public class ChessPlayer extends CustomPlayer {
 
     public ArrayList<String> getStartingDeck() {
         ArrayList<String> val = new ArrayList<>();
-        val.add(Strike_Blue.ID);
-        val.add(Strike_Blue.ID);
-        val.add(Strike_Blue.ID);
-        val.add(Strike_Blue.ID);
-        val.add(Strike_Blue.ID);
+        val.add("ChessPlayer_HealthUpOne");
+        val.add("ChessPlayer_HealthUpOne");
+        val.add("ChessPlayer_HealthUpOne");
         return val;
     }
 

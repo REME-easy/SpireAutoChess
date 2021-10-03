@@ -5,10 +5,10 @@ import com.esotericsoftware.spine.AnimationState.TrackEntry;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
+import com.megacrit.cardcrawl.powers.ThieveryPower;
 
 import SpireAutoChess.modcore.ChessPlayerModCore;
 import SpireAutoChess.monsters.AbstractTeamMonster;
-import SpireAutoChess.powers.TExplosivePower;
 
 public class TLooter extends AbstractTeamMonster {
     public static final String ID = ChessPlayerModCore.MakePath(TLooter.class.getSimpleName());
@@ -40,7 +40,8 @@ public class TLooter extends AbstractTeamMonster {
     @Override
     public void usePreBattleAction() {
         super.usePreBattleAction();
-        ApplyPowerToSelf(new TExplosivePower(this, getMagicNumber(0)));
+        // TODO
+        ApplyPowerToSelf(new ThieveryPower(this, getMagicNumber(0)));
     }
 
     @Override

@@ -91,8 +91,7 @@ public class MonsterTakeDamagePatch {
     public static class ChangeApplyBuffTarget {
         public static void Postfix(ApplyPowerAction _inst, AbstractCreature target, AbstractCreature source,
                 AbstractPower power, int n, boolean b, AbstractGameAction.AttackEffect e) {
-            if (source != null && target != null && power.owner != _inst.target
-                    && power.owner != AbstractDungeon.player) {
+            if (source != null && target != null && target != source && power.owner == AbstractDungeon.player) {
                 power.owner = _inst.target;
                 logger.info("改变了目标。目前：target:" + _inst.target.name + ",owner:" + power.owner);
             }

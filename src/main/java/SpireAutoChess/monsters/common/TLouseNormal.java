@@ -27,6 +27,7 @@ public class TLouseNormal extends AbstractTeamMonster {
         super(NAME, ID, MAX_HP, 0.0F, -5.0F, 180.0F, 140.0F, (String) null, 0.0F, 0.0F);
         this.setDescriptionRange(1);
         this.rarity = MonsterRarity.COMMON;
+        this.race = MonsterRace.ECOLOGY;
         this.actNum = 1;
 
         this.addMoveInfoOnlyMagic(POWER_AMT);

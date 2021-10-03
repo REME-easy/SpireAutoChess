@@ -1,7 +1,13 @@
 {
   "ChessPlayer_Generic": {
     "TEXT": [
-      "怪物"
+      "怪物",
+      "生态",
+      "机械",
+      "市民",
+      "教徒",
+      "中立",
+      "全部"
     ]
   },
   "ChessPlayer_OrganizationScreen": {

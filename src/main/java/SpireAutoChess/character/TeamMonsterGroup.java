@@ -99,7 +99,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
     /**
      * 向战斗中所有友方怪物执行动作。
      * 
-     * @param func
+     * @param func 向每个怪物执行的动作，若为true则停止执行。
      */
     public static void ApplyFuncToEachMonster(Function<AbstractTeamMonster, Boolean> func) {
         for (AbstractTeamMonster m : GetMonsters()) {
@@ -142,7 +142,7 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
     }
 
     /**
-     * 使用序号获取战斗中怪物。从左向右。
+     * 使用序号获取战斗中怪物。从左向右。可以为负，负数从右往左计算。
      * 
      * @param index
      * @return AbstractTeamMonster

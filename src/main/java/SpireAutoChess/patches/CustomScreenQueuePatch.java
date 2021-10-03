@@ -85,13 +85,12 @@ public class CustomScreenQueuePatch {
             // if (MonsterShopScreen.Inst().isOpen) {
             // MonsterShopScreen.Inst().update();
             // }
-            for (int i = 0; i < CustomScreens.size(); i++) {
-                ICustomScreen screen = CustomScreens.get(i);
+            if (CustomScreens.size() > 0) {
+                ICustomScreen screen = CustomScreens.get(0);
                 if (screen.isOpen()) {
                     screen.update();
                 }
             }
-
         }
 
         private static class Locator extends SpireInsertLocator {

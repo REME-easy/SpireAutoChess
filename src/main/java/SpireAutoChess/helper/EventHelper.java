@@ -13,11 +13,13 @@ import SpireAutoChess.monsters.AbstractTeamMonster;
 public class EventHelper {
     public static final ArrayList<BattleStartSubscriber> BattleStartSubscribers = new ArrayList<>();
     public static final ArrayList<TeamMonsterDeathSubscriber> TeamMonsterDeathSubscribers = new ArrayList<>();
+    public static final ArrayList<TeamMonsterSpawnSubscriber> TeamMonsterSpawnSubscribers = new ArrayList<>();
     public static final ArrayList<EnemyDeathSubscriber> EnemyDeathSubscribers = new ArrayList<>();
     public static final ArrayList<StartOfTurnSubscriber> StartOfTurnSubscribers = new ArrayList<>();
     public static final ArrayList<EndOfTurnSubscriber> EndOfTurnSubscribers = new ArrayList<>();
     public static final ArrayList<TeamMonsterChangePositionSubscriber> TeamMonsterChangePositionSubscribers = new ArrayList<>();
     public static final ArrayList<TeamMonsterRemoveSubscriber> TeamMonsterRemoveSubscribers = new ArrayList<>();
+    public static final ArrayList<TeamMonsterTakeTurnSubscriber> TeamMonsterTakeTurnSubscribers = new ArrayList<>();
 
     private static <T> void subscribeIfInstance(ArrayList<T> list, CustomSubscriber sub, Class<T> clazz) {
         if (clazz.isInstance(sub)) {
@@ -28,11 +30,13 @@ public class EventHelper {
     public static void subscribe(CustomSubscriber sub) {
         subscribeIfInstance(BattleStartSubscribers, sub, BattleStartSubscriber.class);
         subscribeIfInstance(TeamMonsterDeathSubscribers, sub, TeamMonsterDeathSubscriber.class);
+        subscribeIfInstance(TeamMonsterSpawnSubscribers, sub, TeamMonsterSpawnSubscriber.class);
         subscribeIfInstance(EnemyDeathSubscribers, sub, EnemyDeathSubscriber.class);
         subscribeIfInstance(StartOfTurnSubscribers, sub, StartOfTurnSubscriber.class);
         subscribeIfInstance(EndOfTurnSubscribers, sub, EndOfTurnSubscriber.class);
         subscribeIfInstance(TeamMonsterChangePositionSubscribers, sub, TeamMonsterChangePositionSubscriber.class);
         subscribeIfInstance(TeamMonsterRemoveSubscribers, sub, TeamMonsterRemoveSubscriber.class);
+        subscribeIfInstance(TeamMonsterTakeTurnSubscribers, sub, TeamMonsterTakeTurnSubscriber.class);
     }
 
     public static void receiveOnBattleStart(AbstractRoom abstractRoom) {
@@ -40,11 +44,13 @@ public class EventHelper {
 
         BattleStartSubscribers.clear();
         TeamMonsterDeathSubscribers.clear();
+        TeamMonsterSpawnSubscribers.clear();
         EnemyDeathSubscribers.clear();
         StartOfTurnSubscribers.clear();
         EndOfTurnSubscribers.clear();
         TeamMonsterChangePositionSubscribers.clear();
         TeamMonsterRemoveSubscribers.clear();
+        TeamMonsterTakeTurnSubscribers.clear();
 
         for (AbstractCard card : AbstractDungeon.player.masterDeck.group) {
             if (card instanceof CustomSubscriber) {
@@ -84,6 +90,10 @@ public class EventHelper {
         void OnTeamMonsterDeath(AbstractTeamMonster monster);
     }
 
+    public interface TeamMonsterSpawnSubscriber extends CustomSubscriber {
+        void OnTeamMonsterSpawn(AbstractTeamMonster monster);
+    }
+
     public interface EnemyDeathSubscriber extends CustomSubscriber {
         void OnMonsterDeath(AbstractMonster monster);
     }
@@ -94,6 +104,10 @@ public class EventHelper {
 
     public interface TeamMonsterRemoveSubscriber extends CustomSubscriber {
         void OnRemoveMonster(int position);
+    }
+
+    public interface TeamMonsterTakeTurnSubscriber extends CustomSubscriber {
+        void OnTakeTurn(AbstractTeamMonster monster);
     }
 
 }

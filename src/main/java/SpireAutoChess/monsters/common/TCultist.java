@@ -29,6 +29,7 @@ public class TCultist extends AbstractTeamMonster {
         this.setDescriptionRange();
 
         this.rarity = MonsterRarity.COMMON;
+        this.race = MonsterRace.BELIEVER;
         this.actNum = 1;
 
         this.dialogX = this.drawX;
@@ -77,6 +78,7 @@ public class TCultist extends AbstractTeamMonster {
     public void upgrade(int level) {
         switch (level) {
             case 0:
+                break;
             case 1:
                 this.changeMagicNumber(0, 2);
                 // 等同于 this.getMoveInfo(0).magic += 2;

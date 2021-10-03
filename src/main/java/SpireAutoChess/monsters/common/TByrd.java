@@ -29,6 +29,7 @@ public class TByrd extends AbstractTeamMonster {
         super(NAME, ID, MAX_HP, 0.0F, 50.0F, 240.0F, 180.0F, (String) null, 0.0F, 0.0F);
         this.setDescriptionRange(2);
         this.rarity = MonsterRarity.COMMON;
+        this.race = MonsterRace.ECOLOGY;
         this.actNum = 1;
 
         this.addMoveInfo(new DamageInfo(this, DAMAGE_1), 0, DAMAGE_AMT_1);

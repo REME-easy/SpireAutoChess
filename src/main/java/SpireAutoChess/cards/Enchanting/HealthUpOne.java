@@ -6,24 +6,27 @@ import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import com.megacrit.cardcrawl.rooms.AbstractRoom.RoomPhase;
 
 import SpireAutoChess.cards.AbstractEnchantingCard;
+import SpireAutoChess.character.TeamMonsterGroup;
 import SpireAutoChess.helper.EventHelper.BattleStartSubscriber;
 import SpireAutoChess.helper.GenericHelper;
 import SpireAutoChess.modcore.ChessPlayerModCore;
+import SpireAutoChess.monsters.AbstractTeamMonster;
 
 public class HealthUpOne extends AbstractEnchantingCard implements BattleStartSubscriber {
     private static final String ID = ChessPlayerModCore.MakePath(HealthUpOne.class.getSimpleName());
     private static CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 
     public HealthUpOne() {
-        super(ID, true, cardStrings, -1, CardType.SKILL, CardRarity.COMMON, CardTarget.NONE);
+        super(ID, true, cardStrings, CardType.SKILL, CardRarity.COMMON, CardTarget.NONE);
         this.setupMagicNumber(4);
     }
 
     @Override
     public void OnBattleStart(AbstractRoom room) {
         if (room.phase == RoomPhase.COMBAT) {
+            AbstractTeamMonster mo = TeamMonsterGroup.Inst().GetMonsterByIndex(-1);
             GenericHelper.addToBotAbstract(() -> {
-                GetEquippedMonster().increaseMaxHp(this.magicNumber, true);
+                mo.increaseMaxHp(this.magicNumber, true);
             });
         }
     }

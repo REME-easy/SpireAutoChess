@@ -14,7 +14,7 @@ public class PlaceHolderOne extends AbstractEnchantingCard implements BattleStar
     private static CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 
     public PlaceHolderOne() {
-        super(ID, true, cardStrings, -1, CardType.SKILL, CardRarity.BASIC, CardTarget.NONE);
+        super(ID, true, cardStrings, CardType.SKILL, CardRarity.BASIC, CardTarget.NONE);
         this.setupMagicNumber(4);
     }
 

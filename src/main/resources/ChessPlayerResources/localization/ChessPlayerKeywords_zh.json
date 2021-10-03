@@ -9,18 +9,24 @@
     "NAMES": [
       "生态"
     ],
-    "DESCRIPTION": "一个种族。"
+    "DESCRIPTION": "一个种族。拥有较强的生成怪物能力。"
   },
   {
     "NAMES": [
       "机械"
     ],
-    "DESCRIPTION": "一个种族。"
+    "DESCRIPTION": "一个种族。拥有较强的防御和死亡后触发能力。"
   },
   {
     "NAMES": [
       "市民"
     ],
-    "DESCRIPTION": "一个种族。"
+    "DESCRIPTION": "一个种族。拥有较强的获取资源的能力。"
+  },
+  {
+    "NAMES": [
+      "教徒"
+    ],
+    "DESCRIPTION": "一个种族。拥有较强的成长能力。"
   }
 ]

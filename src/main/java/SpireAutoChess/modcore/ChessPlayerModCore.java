@@ -37,6 +37,7 @@ import SpireAutoChess.helper.MonsterManager;
 import SpireAutoChess.helper.SecondaryMagicVariable;
 import SpireAutoChess.monsters.AbstractTeamMonster;
 import SpireAutoChess.monsters.common.TCultist;
+import SpireAutoChess.monsters.common.TExploder;
 import SpireAutoChess.monsters.common.TLouseDefensive;
 import SpireAutoChess.monsters.common.TLouseNormal;
 import SpireAutoChess.relics.MonsterOrganization;
@@ -167,6 +168,10 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
                 .any(AbstractTeamMonster.class, (info, monster) -> {
                     MonsterManager.RegisterMonster(monster.id, monster);
                 });
+        new AutoAdd("ChessPlayerMod").setDefaultSeen(false).packageFilter("SpireAutoChess.monsters.uncommon")
+                .any(AbstractTeamMonster.class, (info, monster) -> {
+                    MonsterManager.RegisterMonster(monster.id, monster);
+                });
         logger.info("===加载完成===");
     }
 
@@ -222,6 +227,7 @@ public class ChessPlayerModCore implements EditCharactersSubscriber, EditStrings
 
                 TeamMonsterGroup.Inst().BattleMonsters.add(new TLouseDefensive());
                 TeamMonsterGroup.Inst().BattleMonsters.add(new TLouseNormal());
+                TeamMonsterGroup.Inst().BattleMonsters.add(new TExploder());
 
                 TeamMonsterGroup.Inst().WaitingMonsters.add(new TLouseDefensive());
                 TeamMonsterGroup.Inst().WaitingMonsters.add(new TCultist());

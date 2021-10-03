@@ -37,6 +37,7 @@ import com.megacrit.cardcrawl.vfx.combat.StrikeEffect;
 
 import SpireAutoChess.actions.DamageFrontAction;
 import SpireAutoChess.character.TeamMonsterGroup;
+import SpireAutoChess.helper.EventHelper;
 import SpireAutoChess.helper.GenericHelper;
 import basemod.ReflectionHacks;
 
@@ -58,6 +59,7 @@ public class AbstractTeamMonster extends AbstractMonster {
     protected float targetY;
 
     public MonsterRarity rarity = MonsterRarity.COMMON;
+    public MonsterRace race = MonsterRace.NONE;
     public int actNum = -1;
     public int upgradedTimes = 0;
     public int maxUpgradeTimes = 1;
@@ -65,6 +67,7 @@ public class AbstractTeamMonster extends AbstractMonster {
     private static final int COMMON_PRICE = 50;
     private static final int UNCOMMON_PRICE = 125;
     private static final int RARE_PRICE = 250;
+    private static final String[] TEXT = CardCrawlGame.languagePack.getUIString("ChessPlayer_Generic").TEXT;
 
     public AbstractTeamMonster(String name, String id, int maxHealth, float hb_x, float hb_y, float hb_w, float hb_h,
             String imgUrl, float offsetX, float offsetY) {
@@ -249,6 +252,7 @@ public class AbstractTeamMonster extends AbstractMonster {
         if (isDirty) {
             StringBuilder builder = new StringBuilder();
             int index = 0;
+            builder.append(" #y" + this.race.locale + "  NL ");
             for (String str : this.rawDescriptions) {
                 str = str.replace("D", String.valueOf(this.moveInfos.get(index).info.base))
                         .replace("B", String.valueOf(getBlock(index)))
@@ -452,6 +456,14 @@ public class AbstractTeamMonster extends AbstractMonster {
         this.NextTurnAction = func;
     }
 
+    @Override
+    public void usePreBattleAction() {
+        super.usePreBattleAction();
+        EventHelper.TeamMonsterSpawnSubscribers.forEach((sub) -> {
+            sub.OnTeamMonsterSpawn(this);
+        });
+    }
+
     /**
      * 执行setNextMove设置的行动。
      * 
@@ -479,6 +491,10 @@ public class AbstractTeamMonster extends AbstractMonster {
      */
     @Override
     public void die(boolean triggerRelic) {
+        this.powers.forEach((p) -> {
+            p.onDeath();
+        });
+
         if (!this.isDying) {
             this.isDying = true;
             if (this.currentHealth < 0) {
@@ -804,6 +820,16 @@ public class AbstractTeamMonster extends AbstractMonster {
 
         MonsterRarity(int price) {
             this.price = price;
+        }
+    }
+
+    public enum MonsterRace {
+        ECOLOGY(TEXT[1]), MACHINE(TEXT[2]), CITIZEN(TEXT[3]), BELIEVER(TEXT[4]), NONE(TEXT[5]);
+
+        public String locale;
+
+        MonsterRace(String locale) {
+            this.locale = locale;
         }
     }
 
