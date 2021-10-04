@@ -20,6 +20,7 @@ public class EventHelper {
     public static final ArrayList<TeamMonsterChangePositionSubscriber> TeamMonsterChangePositionSubscribers = new ArrayList<>();
     public static final ArrayList<TeamMonsterRemoveSubscriber> TeamMonsterRemoveSubscribers = new ArrayList<>();
     public static final ArrayList<TeamMonsterTakeTurnSubscriber> TeamMonsterTakeTurnSubscribers = new ArrayList<>();
+    public static final ArrayList<TeamMonsterGainBlockSubscriber> TeamMonsterGainBlockSubscribers = new ArrayList<>();
 
     private static <T> void subscribeIfInstance(ArrayList<T> list, CustomSubscriber sub, Class<T> clazz) {
         if (clazz.isInstance(sub)) {
@@ -37,6 +38,7 @@ public class EventHelper {
         subscribeIfInstance(TeamMonsterChangePositionSubscribers, sub, TeamMonsterChangePositionSubscriber.class);
         subscribeIfInstance(TeamMonsterRemoveSubscribers, sub, TeamMonsterRemoveSubscriber.class);
         subscribeIfInstance(TeamMonsterTakeTurnSubscribers, sub, TeamMonsterTakeTurnSubscriber.class);
+        subscribeIfInstance(TeamMonsterGainBlockSubscribers, sub, TeamMonsterGainBlockSubscriber.class);
     }
 
     public static void receiveOnBattleStart(AbstractRoom abstractRoom) {
@@ -51,6 +53,7 @@ public class EventHelper {
         TeamMonsterChangePositionSubscribers.clear();
         TeamMonsterRemoveSubscribers.clear();
         TeamMonsterTakeTurnSubscribers.clear();
+        TeamMonsterGainBlockSubscribers.clear();
 
         for (AbstractCard card : AbstractDungeon.player.masterDeck.group) {
             if (card instanceof CustomSubscriber) {
@@ -108,6 +111,10 @@ public class EventHelper {
 
     public interface TeamMonsterTakeTurnSubscriber extends CustomSubscriber {
         void OnTakeTurn(AbstractTeamMonster monster);
+    }
+
+    public interface TeamMonsterGainBlockSubscriber extends CustomSubscriber {
+        float OnGainBlock(AbstractTeamMonster monster, float amt);
     }
 
 }

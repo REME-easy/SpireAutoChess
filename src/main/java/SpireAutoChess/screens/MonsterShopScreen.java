@@ -136,7 +136,8 @@ public class MonsterShopScreen implements ICustomScreen {
         this.speechTimer = 1.5F;
         this.speechBubble = null;
 
-        // TODO
+        this.monsters.clear();
+        this.purchaseButtons.clear();
         for (AbstractTeamMonster m : MonsterManager.GetRandomMonsters(4, true)) {
             addMonster(m);
         }

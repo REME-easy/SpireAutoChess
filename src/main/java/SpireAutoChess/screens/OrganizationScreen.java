@@ -223,6 +223,11 @@ public class OrganizationScreen implements ICustomScreen {
             teamMonsters.remove(monster);
             sellButtons.remove(ind);
             upgradeButtons.remove(ind);
+            if (this.index == 0) {
+                TeamMonsterGroup.GetWaitingMonsters().remove(monster);
+            } else if (this.index == 1) {
+                TeamMonsterGroup.GetBattleMonsters().remove(monster);
+            }
             EventHelper.TeamMonsterRemoveSubscribers.forEach((m) -> {
                 m.OnRemoveMonster(index);
             });

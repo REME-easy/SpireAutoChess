@@ -39,7 +39,6 @@
     "ChessPlayer_TLittleAcidSlime": {
         "NAME": "小型酸液史莱姆",
         "MOVES": [
-            "阵亡时，最前排的敌人失去 #bM 点 #y力量 。",
             "意图 #b1 ：造成 #bD 点伤害。"
         ],
         "DIALOG": []
@@ -64,7 +63,7 @@
     "ChessPlayer_TBanditChild": {
         "NAME": "尖尖",
         "MOVES": [
-            "战斗开始时，你每有 #bM 点 #y金币获得 #b1 点 #y力量 。",
+            "战斗开始时，你每有 #bM 点 #y金币 获得 #b1 点 #y力量 。",
             "意图 #b1 ：造成 #bD 点伤害 #bM 次。"
         ],
         "DIALOG": []

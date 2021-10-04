@@ -34,5 +34,9 @@
   "ChessPlayer_Hex": {
     "NAME": "邪咒",
     "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时， !CPM! 号位置的友方怪物获得 !M! 点 力量 。"
+  },
+  "ChessPlayer_": {
+    "NAME": "寄生",
+    "DESCRIPTION": " ChessPlayer:强化 。 NL 战斗开始时，"
   }
 }

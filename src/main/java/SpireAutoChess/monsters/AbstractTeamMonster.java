@@ -102,8 +102,10 @@ public class AbstractTeamMonster extends AbstractMonster {
      */
     protected void DamageFront(DamageInfo info, DamageType type, AttackEffect effect, boolean shake, int times) {
         info.type = type;
-        addToBot(new AnimateFastAttackAction(this));
-        addToBot(new DamageFrontAction(info, effect));
+        for (int i = 0; i < times; i++) {
+            addToBot(new AnimateFastAttackAction(this));
+            addToBot(new DamageFrontAction(info, effect));
+        }
     }
 
     /**
