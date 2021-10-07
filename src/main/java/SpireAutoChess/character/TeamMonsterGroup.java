@@ -298,19 +298,11 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
 
     @SpirePatch(clz = AbstractPlayer.class, method = "<class>")
     public static class MonstersFields {
-        public static SpireField<TeamMonsterGroup> Monsters = new SpireField<TeamMonsterGroup>(() -> {
-            return new TeamMonsterGroup();
-        });
-
-        public MonstersFields() {
-        }
+        public static SpireField<TeamMonsterGroup> Monsters = new SpireField<>(() -> new TeamMonsterGroup());
     }
 
     @SpirePatch(clz = AbstractRoom.class, method = "update")
     public static class MonsterUpdatePatch {
-        public MonsterUpdatePatch() {
-        }
-
         public static void Postfix(AbstractRoom _inst) {
             AbstractPlayer p = AbstractDungeon.player;
             if (p != null) {
@@ -322,9 +314,6 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
 
     @SpirePatch(clz = AbstractRoom.class, method = "render", paramtypez = { SpriteBatch.class })
     public static class MonsterRenderPatch {
-        public MonsterRenderPatch() {
-        }
-
         @SpireInsertPatch(rloc = 13)
         public static void Insert(AbstractRoom _inst, SpriteBatch sb) {
             AbstractPlayer p = AbstractDungeon.player;
@@ -346,9 +335,6 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
 
     @SpirePatch(clz = AbstractPlayer.class, method = "applyPreCombatLogic")
     public static class MonsterStartOfBattlePatch {
-        public MonsterStartOfBattlePatch() {
-        }
-
         public static void Postfix(AbstractPlayer _inst) {
             (MonstersFields.Monsters.get(_inst)).usePreBattleAction();
         }
@@ -356,9 +342,6 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
 
     @SpirePatch(clz = AbstractRoom.class, method = "applyEndOfTurnRelics")
     public static class MonsterEndOfTurnPatch {
-        public MonsterEndOfTurnPatch() {
-        }
-
         public static void Postfix(AbstractRoom _inst) {
             (MonstersFields.Monsters.get(AbstractDungeon.player)).atEndOfTurn();
         }
@@ -366,9 +349,6 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
 
     @SpirePatch(clz = BattleStartEffect.class, method = "update")
     public static class ShowSkillBarPatch {
-        public ShowSkillBarPatch() {
-        }
-
         @SpireInsertPatch(locator = Locator.class)
         public static void Insert(BattleStartEffect _inst) {
             TeamMonsterGroup tmp = MonstersFields.Monsters.get(AbstractDungeon.player);
@@ -381,9 +361,6 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
         }
 
         private static class Locator extends SpireInsertLocator {
-            private Locator() {
-            }
-
             public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
                 Matcher finalMatcher = new Matcher.MethodCallMatcher(AbstractPlayer.class, "showHealthBar");
                 return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
@@ -399,9 +376,6 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
         }
 
         private static class Locator extends SpireInsertLocator {
-            private Locator() {
-            }
-
             public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
                 Matcher finalMatcher = new Matcher.MethodCallMatcher(MonsterGroup.class, "showIntent");
                 return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
