@@ -6,6 +6,7 @@ import static SpireAutoChess.modcore.ChessPlayerModCore.GetCharColor;
 
 import java.util.ArrayList;
 
+import SpireAutoChess.ui.AutoEndTurnOption;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

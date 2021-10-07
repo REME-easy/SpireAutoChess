@@ -56,5 +56,11 @@
       "概不退换。",
       "祝你顺利啊。"
     ]
+  },
+
+  "ChessPlayer_AutoEndTurnOption": {
+    "TEXT": [
+      "自动结束回合"
+    ]
   }
 }

@@ -3,6 +3,8 @@ package SpireAutoChess.character;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+import SpireAutoChess.patches.AutoEndTurnPatch;
+import SpireAutoChess.ui.AutoEndTurnOption;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.LineFinder;
 import com.evacipated.cardcrawl.modthespire.lib.Matcher;
@@ -10,6 +12,8 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireField;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInsertLocator;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInsertPatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
+import com.megacrit.cardcrawl.actions.common.EndTurnAction;
+import com.megacrit.cardcrawl.actions.watcher.PressEndTurnButtonAction;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -331,11 +335,12 @@ public class TeamMonsterGroup implements ISubscriber, CustomSavable<ArrayList<Ar
 
     @SpirePatch(clz = AbstractPlayer.class, method = "applyStartOfTurnRelics")
     public static class MonsterStartOfTurnPatch {
-        public MonsterStartOfTurnPatch() {
-        }
-
         public static void Postfix(AbstractPlayer _inst) {
             (MonstersFields.Monsters.get(_inst)).atStartOfTurn();
+            if (AutoEndTurnOption.isAutoEnding()) {
+                GenericHelper.info("检测到自动结束回合");
+                AbstractDungeon.actionManager.addToBottom(new PressEndTurnButtonAction());
+            }
         }
     }
 
